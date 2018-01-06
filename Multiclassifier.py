@@ -1,0 +1,159 @@
+import tensorflow as tf
+import numpy as np
+from config import Config
+
+class MultiClassificationGAN:
+
+    def _sample_Z(self, m):
+        '''Uniform prior for G(Z)'''
+        return np.random.uniform(-1., 1., size=[m, self.z_dim])
+
+    def _weight_var(self, shape, name):
+        return tf.get_variable(name=name, shape=shape, initializer=tf.contrib.layers.xavier_initializer())
+
+    def _bias_var(self, shape, name):
+        return tf.get_variable(name=name, shape=shape, initializer=tf.constant_initializer(0))
+
+    def _create_distriminator(self, x, y, input_dim, num_class):
+        """
+
+        :param x: batch_size * dimension
+        :param y: batch_size * num_class
+        :return:
+        """
+        y_index = tf.arg_max(y, dimension=-1)
+        # parameters
+        D_W1 = self._weight_var([num_class, input_dim, 128], 'Discriminator_W1')
+        D_b1 = self._bias_var([num_class, 128], 'Discriminator_b1')
+        D_W2 = self._weight_var([128, 1], 'Discriminator_W2')
+        D_b2 = self._bias_var([1], 'Discriminator_b2')
+        var_list = [D_W1,D_b1,D_W2,D_b2]
+
+        x_E = tf.reshape(x, [-1, 1, input_dim])
+        D_W1_E = tf.nn.embedding_lookup(D_W1, y_index)
+        D_b1_E = tf.nn.embedding_lookup(D_b1, y_index)
+        D_h1 = tf.nn.relu(tf.reshape(tf.matmul(x_E, D_W1_E), [-1, 128]) + D_b1_E)
+        D_logit = tf.matmul(D_h1, D_W2) + D_b2
+        D_prob = tf.nn.sigmoid(D_logit)
+
+        return D_prob, D_logit, var_list
+
+    def _create_generator(self, z, y, output_dim, num_class, z_dim):
+        y_index = tf.argmax(y, dimension=-1)
+
+        G_W1 = self._weight_var([num_class, z_dim, 128], 'G_W1')
+        G_b1 = self._bias_var([num_class, 128], 'G_B1')
+        # z2 = W * z1 + b
+        G_W2 = self._weight_var([128, output_dim], 'G_W2')
+        G_b2 = self._bias_var([output_dim], 'G_B2')
+        var_list = [G_W1, G_b1, G_W2, G_b2]
+
+
+        z_E = tf.reshape(z, [-1, 1, z_dim])
+        G_W1_E = tf.nn.embedding_lookup(G_W1, y_index)
+        G_b1_E = tf.nn.embedding_lookup(G_b1, y_index)
+
+        G_h1 = tf.nn.relu(tf.reshape(tf.matmul(z_E, G_W1_E), [-1, 128]) + G_b1_E)
+        G_log_prob = tf.matmul(G_h1, G_W2) + G_b2
+        G_prob = tf.nn.sigmoid(G_log_prob)
+
+        return G_prob, var_list
+
+    def _create_classifer(self, x, y, input_dim, num_class):
+
+        C_W1 = self._weight_var([input_dim, 128], 'C_W1')
+        C_b1 = self._bias_var([128], 'C_b1')
+
+        C_W2 = self._weight_var([128, num_class], 'C_W2')
+        C_b2 = self._bias_var([num_class], 'C_b2')
+
+        var_list = [C_W1, C_W2, C_b1, C_b2]
+
+
+        C_h1 = tf.nn.relu(tf.matmul(x, C_W1) + C_b1)
+        C_logits = tf.matmul(C_h1, C_W2) + C_b2
+        C_prob = tf.nn.softmax(C_logits)
+        cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(C_prob), reduction_indices=[1]))
+        C_label = tf.arg_max(C_prob, dimension=-1)
+        C_onehot = tf.one_hot(C_label, depth=10, dtype=tf.float32)
+        return C_onehot,cross_entropy, var_list
+
+    def _build_graph(self, input_dim, num_class, z_dim):
+
+
+        self.X = tf.placeholder(tf.float32, shape=[None, input_dim], name='X')
+        self.Z = tf.placeholder(tf.float32, shape=[None, z_dim], name='Z')
+        self.Y = tf.placeholder(tf.float32, shape=[None, num_class], name='Y')
+        self.YS = tf.placeholder(tf.float32, shape=[None, num_class], name='Y_Sample')
+
+        with tf.variable_scope('multi_class_gan', reuse=tf.AUTO_REUSE):
+            predicted_Y,self.C_loss, classifer_vars = self._create_classifer(self.X, self.Y, input_dim, num_class)
+            generated_fakes, generator_vars = self._create_generator(self.Z, self.YS, input_dim, num_class, z_dim)
+            self.G_sample = generated_fakes
+            D_classifer, D_logit_classifer, discriminator_vars = self._create_distriminator(self.X, predicted_Y, input_dim, num_class)
+            D_real, D_logit_real, _ = self._create_distriminator(self.X, self.Y, input_dim, num_class)
+            D_fake, D_logit_fake,_  = self._create_distriminator(generated_fakes, self.YS, input_dim, num_class)
+
+        # Loss
+        self.D_loss = - tf.reduce_mean(tf.log(D_real) + tf.log(1. - D_fake) + tf.log(D_classifer))
+        # 对于判别网络, 希望D_fake尽可能大，这样可以迷惑生成网络，
+        self.G_loss = -tf.reduce_mean(tf.log(D_fake))
+
+        def optimize_with_clip(loss, var_list):
+            optimizer = tf.train.AdamOptimizer(0.0005)
+            grads = optimizer.compute_gradients(loss=loss, var_list=var_list)
+            for i, (g, v) in enumerate(grads):
+                if g is not None:
+                    grads[i] = (tf.clip_by_norm(g, 5), v)  # clip gradients
+            train_op = optimizer.apply_gradients(grads)
+            return train_op
+
+        # TODO 参数问题，学习那些参数？
+        self.D_optimizer = optimize_with_clip(self.D_loss, var_list=discriminator_vars)
+        self.C_optimizer = optimize_with_clip(self.C_loss, var_list=classifer_vars)
+        self.G_optimizer = optimize_with_clip(self.G_loss, var_list=generator_vars)
+        # self.D_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.D_loss, var_list=discriminator_vars)
+        # self.C_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.C_loss, var_list=classifer_vars)
+        # self.G_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.G_loss, var_list=generator_vars)
+
+        print('Graph has been built')
+
+    def figure_step(self,y):
+        y_index = tf.argmax(y, dimension=-1)
+        samples, label = self.sess.run([self.G_sample, y_index], feed_dict={
+            self.Z: self._sample_Z(16), self.YS: y})
+        return samples,label
+
+
+    def train_step(self, X_data, Y_data, YS_data):
+        # Discriminator
+        batch_size = self.batch_size
+        _, D_loss_curr = self.sess.run([self.D_optimizer, self.D_loss], feed_dict={
+            self.X: X_data, self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+
+        # Generator & Classifier
+        _, G_loss_curr = self.sess.run([self.G_optimizer, self.G_loss], feed_dict={
+            self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+        _, C_loss_curr = self.sess.run([self.C_optimizer, self.C_loss], feed_dict={
+            self.X: X_data, self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+
+        return D_loss_curr, G_loss_curr, C_loss_curr
+
+    def init_session(self):
+        self.sess = tf.Session()
+        self.sess.run(tf.global_variables_initializer())
+
+
+    def __init__(self):
+        self.config = Config
+        self.z_dim = self.config.z_dim
+        self.batch_size = self.config.batch_size
+        self._build_graph(self.config.input_dim, self.config.num_class, self.z_dim)
+
+
+
+
+
+
+
+
