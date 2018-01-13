@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from config import Config
+from Util import log
+from Util import one_hot
 
 class MultiClassificationGAN:
 
@@ -80,68 +82,130 @@ class MultiClassificationGAN:
 
     def _build_graph(self, input_dim, num_class, z_dim):
 
+        self.global_step = tf.Variable(initial_value=0, dtype=tf.int64, trainable=False)
 
         self.X = tf.placeholder(tf.float32, shape=[None, input_dim], name='X')
         self.Z = tf.placeholder(tf.float32, shape=[None, z_dim], name='Z')
-        self.Y = tf.placeholder(tf.float32, shape=[None, num_class], name='Y')
-        self.YS = tf.placeholder(tf.float32, shape=[None, num_class], name='Y_Sample')
+        self.Y = tf.placeholder(tf.float32, shape=[None, num_class], name='Y_Ground_truth')
+
 
         with tf.variable_scope('multi_class_gan', reuse=tf.AUTO_REUSE):
+            # classier, input x,ys
             predicted_Y,self.C_loss, classifer_vars = self._create_classifer(self.X, self.Y, input_dim, num_class)
-            generated_fakes, generator_vars = self._create_generator(self.Z, self.YS, input_dim, num_class, z_dim)
+            generated_fakes, generator_vars = self._create_generator(self.Z, self.Y, input_dim, num_class, z_dim)
             self.G_sample = generated_fakes
+
             D_classifer, D_logit_classifer, discriminator_vars = self._create_distriminator(self.X, predicted_Y, input_dim, num_class)
             D_real, D_logit_real, _ = self._create_distriminator(self.X, self.Y, input_dim, num_class)
-            D_fake, D_logit_fake,_  = self._create_distriminator(generated_fakes, self.YS, input_dim, num_class)
+            D_fake, D_logit_fake,_  = self._create_distriminator(generated_fakes, self.Y, input_dim, num_class)
 
+        # Inference Function:
+        self.infer_discriminator, _, _ = self._create_distriminator(self.X , self.Y,input_dim, num_class)
         # Loss
         self.D_loss = - tf.reduce_mean(tf.log(D_real) + tf.log(1. - D_fake) + tf.log(D_classifer))
         # 对于判别网络, 希望D_fake尽可能大，这样可以迷惑生成网络，
         self.G_loss = -tf.reduce_mean(tf.log(D_fake))
 
-        def optimize_with_clip(loss, var_list):
+        def optimize_with_clip(loss, var_list, global_step=None):
             optimizer = tf.train.AdamOptimizer(0.0005)
             grads = optimizer.compute_gradients(loss=loss, var_list=var_list)
             for i, (g, v) in enumerate(grads):
                 if g is not None:
                     grads[i] = (tf.clip_by_norm(g, 5), v)  # clip gradients
-            train_op = optimizer.apply_gradients(grads)
+            train_op = optimizer.apply_gradients(grads, global_step=global_step)
             return train_op
 
         # TODO 参数问题，学习那些参数？
-        self.D_optimizer = optimize_with_clip(self.D_loss, var_list=discriminator_vars)
+        self.D_optimizer = optimize_with_clip(self.D_loss, var_list=discriminator_vars, global_step=self.global_step)
         self.C_optimizer = optimize_with_clip(self.C_loss, var_list=classifer_vars)
         self.G_optimizer = optimize_with_clip(self.G_loss, var_list=generator_vars)
         # self.D_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.D_loss, var_list=discriminator_vars)
         # self.C_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.C_loss, var_list=classifer_vars)
         # self.G_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.G_loss, var_list=generator_vars)
 
-        print('Graph has been built')
+        log('Graph has been built')
+
 
     def figure_step(self,y):
         y_index = tf.argmax(y, dimension=-1)
         samples, label = self.sess.run([self.G_sample, y_index], feed_dict={
-            self.Z: self._sample_Z(16), self.YS: y})
-        return samples,label
+            self.Z: self._sample_Z(16), self.Y: y})
+        return samples, label
 
 
-    def train_step(self, X_data, Y_data, YS_data):
+    def inference_step(self, X_data):
+        """
+        利用GAN去计算每个分类的类别，X——data会自动的拓展到合适的num数目
+        :param X_data:
+        :return:
+        """
+        num_class = self.config.num_class
+
+        Y_data = [i for i in range(num_class) for x in X_data]
+        X_data = [x for i in range(num_class) for x in X_data]
+        Y_data = one_hot(Y_data, num_class)
+
+        probs = self.sess.run([self.infer_discriminator], feed_dict={
+            self.X: X_data,self.Y: Y_data})
+
+        # batch_size * num_class
+        probs = np.reshape(probs, [-1, num_class])
+        print(probs)
+        predict_label = np.argmax(probs, axis=-1)
+        return predict_label
+
+    def test_step(self, X_data, Y_data):
+        Y_hat = self.inference_step(X_data)
+
+        pt = 0
+        Y_data = np.argmax(Y_data, -1)
+        print(Y_data)
+        print(Y_hat)
+        for y,yh in zip(Y_data,Y_hat):
+            if y == yh:
+                pt += 1
+        return pt / len(Y_data)
+
+    def train_step(self, X_data, Y_data):
         # Discriminator
         batch_size = self.batch_size
         _, D_loss_curr = self.sess.run([self.D_optimizer, self.D_loss], feed_dict={
-            self.X: X_data, self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+            self.X: X_data, self.Z: self._sample_Z(batch_size), self.Y: Y_data})
 
         # Generator & Classifier
         _, G_loss_curr = self.sess.run([self.G_optimizer, self.G_loss], feed_dict={
-            self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+            self.Z: self._sample_Z(batch_size), self.Y: Y_data})
         _, C_loss_curr = self.sess.run([self.C_optimizer, self.C_loss], feed_dict={
-            self.X: X_data, self.Z: self._sample_Z(batch_size), self.YS: YS_data, self.Y: Y_data})
+            self.X: X_data, self.Z: self._sample_Z(batch_size),  self.Y: Y_data})
 
-        return D_loss_curr, G_loss_curr, C_loss_curr
+        step = self.sess.run(self.global_step)
+        return step, D_loss_curr, G_loss_curr, C_loss_curr
 
-    def init_session(self):
+    def init_session(self, mode='Train'):
+        log('initializing the model...')
+        log('train_mode: %s' % mode)
+        self.saver = tf.train.Saver()
         self.sess = tf.Session()
-        self.sess.run(tf.global_variables_initializer())
+
+        # check from checkpoint
+        ckpt_path = self.config.checkpoint_path
+        log('check the checkpoint_path : %s' % ckpt_path)
+        ckpt = tf.train.get_checkpoint_state(ckpt_path)
+        if ckpt and ckpt.model_checkpoint_path:
+            log('restoring from %s' % ckpt.model_checkpoint_path)
+            self.saver.restore(self.sess, ckpt.model_checkpoint_path)
+        elif mode != 'Train':
+            raise FileNotFoundError('Inference mode asks the checkpoint !')
+        else:
+            log('does not find the checkpoint, use fresh parameters')
+            self.sess.run(tf.global_variables_initializer())
+
+
+    def save_to_checkpoint(self, path=None):
+        if path is None:
+            path = self.config.checkpoint_path
+        self.saver.save(self.sess, path + 'model.ckpt', global_step=self.global_step)
+        log('checkpoint has been saved to :'+path + 'model.ckpt')
 
 
     def __init__(self):

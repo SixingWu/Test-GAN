@@ -23,10 +23,13 @@ gan.init_session()
 
 for i in range(0,50000):
     X, Y = mnist.train.next_batch(gan.batch_size)
-    res = gan.train_step( X_data=X, Y_data=Y, YS_data=Y)
-    if i % 20000 == 0:
+    res = gan.train_step( X_data=X, Y_data=Y)
+    if i % 2000 == 0:
+        if i >0:
+            gan.save_to_checkpoint()
         samples, labels = gan.figure_step(Y)
         print(labels)
+        print(gan.test_step(X_data=X,Y_data=Y))
         try:
             fig = plot(samples)
             # plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
