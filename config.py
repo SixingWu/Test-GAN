@@ -9,6 +9,8 @@ class Config:
     num_class = 10
     input_dim = 28 * 28
     batch_size=16
+    embed=False
+    x_dim=input_dim
 
     # generator
     z_dim = 64

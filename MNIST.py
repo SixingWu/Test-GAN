@@ -1,5 +1,6 @@
-from Multiclassifier import MultiClassificationGAN
+from Multiclassifier_exp import MultiClassificationGAN
 from tensorflow.examples.tutorials.mnist import input_data
+from config import Config
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -17,8 +18,8 @@ def plot(samples):
 
     return fig
 
-
-gan = MultiClassificationGAN()
+config = Config()
+gan = MultiClassificationGAN(config)
 gan.init_session()
 
 for i in range(0,50000):
