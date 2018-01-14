@@ -36,29 +36,33 @@ class DataUtil:
         log('total account of vertex: %d' % len(vertex_set))
         log('total labels of vertex: %d' % len(labels_set))
         log('transforming the dataset')
+        n = len(vertex_set)
+        self.adj_matrix = np.eye(n)
         num_class = len(labels_set) + 1
         for vertex1,labels1,vertex2,labels2 in tmp:
-            vertex_list.append([vertex1])
+            self.adj_matrix[vertex1][vertex2] = 1
+            self.adj_matrix[vertex2][vertex1] = 1
+            vertex_list.append(vertex1)
             label_list.append(array_to_multi_hot(labels1, num_class))
-            vertex_list.append([vertex2])
+            vertex_list.append(vertex2)
             label_list.append(array_to_multi_hot(labels2, num_class))
         log('transforming the done!')
         log('training size : %d' % (len(vertex_list)))
         self.num_class = num_class
-        self.num_label = len(vertex_set)
+        self.num_vertex = len(vertex_set)
         self.x = np.array(vertex_list)
         self.y = np.array(label_list)
         self.ids = range(0, len(vertex_list))
 
     def next_batch(self,batch_size):
         batch_ids = np.array(random.sample(self.ids, batch_size), dtype=np.int32)
-        x = np.array(self.x[batch_ids])
+        x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
         return x,y
 
 
 if __name__ =='__main__':
-    test = DataUtil(max_line=10000)
+    test = DataUtil(max_line=100)
     x, y = test.next_batch(2)
     print(x)
-    print(y)
+    print(np.shape(x))

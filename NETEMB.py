@@ -4,11 +4,10 @@ from Data_Util import DataUtil
 
 data = DataUtil()
 config = Config()
-config.x_dim = 1
-config.x_num = data.num_label
+config.x_dim = data.num_vertex
+config.input_dim = data.num_vertex
 config.num_class = data.num_class
 config.checkpoint_path = 'netemb/'
-config.embed = True
 gan = MultiClassificationGAN(config)
 gan.init_session()
 
