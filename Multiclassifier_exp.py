@@ -65,7 +65,7 @@ class MultiClassificationGAN:
         z = tf.reshape(z, [-1, 1, z_dim])
         G_h1 = tf.nn.relu(tf.reshape(tf.matmul(z, G_W1), [-1, 128]) + G_b1)
         G_log_prob = tf.matmul(G_h1, G_W2) + G_b2
-        G_prob = tf.nn.sigmoid(G_log_prob)
+        G_prob = tf.nn.softmax(G_log_prob)
 
         return G_prob, var_list
 
