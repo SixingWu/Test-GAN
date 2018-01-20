@@ -23,6 +23,8 @@ class MultiClassificationGAN:
         :return:
         """
         # Transform Y
+        y = tf.nn.softmax(y)
+
         D_W_all = self._weight_var([num_class, input_dim * 128], 'Discriminator_all')
         D_b_all = self._bias_var([num_class, 128], 'Discriminator_b1')
 
@@ -45,6 +47,7 @@ class MultiClassificationGAN:
 
     def _create_generator(self, z, y, output_dim, num_class, z_dim):
 
+        y = tf.nn.softmax(y)
         # z2 = W * z1 + b
         G_W2 = self._weight_var([128, output_dim], 'G_W2')
         G_b2 = self._bias_var([output_dim], 'G_B2')
@@ -75,7 +78,7 @@ class MultiClassificationGAN:
         C_b2 = self._bias_var([num_class], 'C_b2')
 
         var_list = [C_W1, C_W2, C_b1, C_b2]
-
+        y = tf.nn.softmax(y)
 
         C_h1 = tf.nn.relu(tf.matmul(x, C_W1) + C_b1)
         C_logits = tf.matmul(C_h1, C_W2) + C_b2
@@ -83,7 +86,7 @@ class MultiClassificationGAN:
         cross_entropy = tf.reduce_mean(-tf.reduce_sum(y * tf.log(C_prob), reduction_indices=[1]))
         C_label = tf.arg_max(C_prob, dimension=-1)
         C_onehot = tf.one_hot(C_label, depth=num_class, dtype=tf.float32)
-        return C_onehot,cross_entropy, var_list
+        return C_prob,cross_entropy, var_list
 
     def _build_graph(self, input_dim, num_class,z_dim):
 
@@ -114,11 +117,11 @@ class MultiClassificationGAN:
         # Inference Function:
         self.infer_discriminator, _, _ = self._create_distriminator(self.X , self.Y,input_dim, num_class)
         # Loss
-        self.D_loss = - tf.reduce_mean(tf.log(D_real) + tf.log(1. - D_fake) + tf.log(D_classifer))
+        self.D_loss = - tf.reduce_mean(tf.log(D_real) + 0.5*tf.log(1. - D_fake) + 0.5*tf.log(1 - D_classifer))
         # 对于判别网络, 希望D_fake尽可能大，这样可以迷惑生成网络，
-        self.G_loss = -tf.reduce_mean(tf.log(D_fake))
+        self.G_loss = tf.reduce_mean(tf.log(1.0 - D_fake))
         # Classifier
-        self.C_loss2 = - tf.reduce_mean(tf.log(D_classifer))
+        self.C_loss2 = tf.reduce_mean(tf.log(1.0 - D_classifer) + tf.reduce_mean(self.Y * tf.log(0.0000001+self.Y / (predicted_Y + 0.0000001))))
 
         def optimize_with_clip(loss, var_list, global_step=None):
             optimizer = tf.train.AdamOptimizer(0.0005)
@@ -130,10 +133,11 @@ class MultiClassificationGAN:
             return train_op
 
         # TODO 参数问题，学习那些参数？
+        #  tf.Variable(initial_value=1.0) #
         self.D_optimizer = optimize_with_clip(self.D_loss, var_list=discriminator_vars, global_step=self.global_step)
-        self.C_optimizer = optimize_with_clip(self.C_loss, var_list=classifer_vars)
+        self.C_optimizer = tf.Variable(initial_value=1.0,name='none') # optimize_with_clip(self.C_loss , var_list=classifer_vars)
         self.G_optimizer = optimize_with_clip(self.G_loss, var_list=generator_vars)
-        self.C2_optimizer = optimize_with_clip(self.C_loss2, var_list=discriminator_vars)
+        self.C2_optimizer = optimize_with_clip(self.C_loss2, var_list=classifer_vars)
         # self.D_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.D_loss, var_list=discriminator_vars)
         # self.C_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.C_loss, var_list=classifer_vars)
         # self.G_optimizer = tf.train.AdamOptimizer(0.0005).minimize(self.G_loss, var_list=generator_vars)
@@ -190,7 +194,7 @@ class MultiClassificationGAN:
         # Generator & Classifier
         _, G_loss_curr = self.sess.run([self.G_optimizer, self.G_loss], feed_dict={
             self.Z: self._sample_Z(batch_size), self.Y: Y_data})
-        _, C_loss_curr,_,_= self.sess.run([self.C_optimizer, self.C_loss, self.C2_optimizer, self.C_loss2], feed_dict={
+        _, _,_, C_loss_curr= self.sess.run([self.C_optimizer, self.C_loss, self.C2_optimizer, self.C_loss2], feed_dict={
             self.X_input: X_data, self.Z: self._sample_Z(batch_size),  self.Y: Y_data})
 
         step = self.sess.run(self.global_step)
