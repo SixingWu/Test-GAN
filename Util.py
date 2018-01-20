@@ -9,6 +9,10 @@ def one_hot(array, nb_classes):
 
 def array_to_multi_hot(labels, nb_classes):
     res = np.zeros(nb_classes)
+    sums = 0
     for label in labels:
         res[label] = 1
+        sums += 1
+    if sums > 0:
+        res /= sums
     return res

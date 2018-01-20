@@ -2,7 +2,7 @@ from Multiclassifier_exp import MultiClassificationGAN
 from config import Config
 from Data_Util import DataUtil
 
-data = DataUtil()
+data = DataUtil(max_line=1000)
 config = Config()
 config.x_dim = data.num_vertex
 config.input_dim = data.num_vertex
