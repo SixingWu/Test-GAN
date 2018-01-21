@@ -4,7 +4,7 @@ class Config:
     steps_per_epoch = 10000
     epochs = 10
     infor_step = 100
-
+    middle_size = 64
     # input
     num_class = 10
     input_dim = 28 * 28

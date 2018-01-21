@@ -1,0 +1,21 @@
+[I 06:30:58.397 NotebookApp] Writing notebook server cookie secret to /run/user/1001/jupyter/notebook_cookie_secret
+[I 06:30:58.798 NotebookApp] Serving notebooks from local directory: /ldev/wsx/tmp/netemb/Test-GAN
+[I 06:30:58.798 NotebookApp] 0 active kernels 
+[I 06:30:58.798 NotebookApp] The Jupyter Notebook is running at: http://0.0.0.0:6910/?token=3c0a040c32e36a9eff16160004540c44187995e9577fdb94
+[I 06:30:58.798 NotebookApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+[W 06:30:58.798 NotebookApp] No web browser found: could not locate runnable browser.
+[C 06:30:58.798 NotebookApp] 
+    
+    Copy/paste this URL into your browser when you connect for the first time,
+    to login with a token:
+        http://0.0.0.0:6910/?token=3c0a040c32e36a9eff16160004540c44187995e9577fdb94
+[I 06:31:10.108 NotebookApp] 302 GET /api/kernelspecs (111.196.77.84) 1.49ms
+[I 06:31:10.114 NotebookApp] 302 GET / (111.196.77.84) 0.32ms
+[I 06:31:10.427 NotebookApp] 302 GET /tree? (111.196.77.84) 0.53ms
+[I 06:31:15.149 NotebookApp] 302 POST /login?next=%2Ftree%3F (111.196.77.84) 10.45ms
+[I 06:31:17.008 NotebookApp] 302 GET /login?next=%2Fapi%2Fkernelspecs (111.196.77.84) 0.45ms
+[I 06:33:56.240 NotebookApp] Saving file at /Multiclassifier_exp_back.py
+[I 06:37:43.531 NotebookApp] Saving file at /Multiclassifier_exp.py
+[I 06:38:16.506 NotebookApp] Saving file at /Multiclassifier_exp.py
+[I 06:40:50.209 NotebookApp] Saving file at /config.py
+[I 06:41:48.327 NotebookApp] Saving file at /Multiclassifier_exp.py
