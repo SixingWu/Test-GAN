@@ -8,7 +8,7 @@ class Config:
     # input
     num_class = 10
     input_dim = 28 * 28
-    batch_size= 128
+    batch_size= 64
     embed=False
     x_dim=input_dim
 
