@@ -19,5 +19,5 @@ for i in range(0,50000):
             gan.save_to_checkpoint()
         samples, labels = gan.figure_step(Y)
         print(labels)
-        print(gan.test_step(X_data=X,Y_data=Y))
+        print(gan.test_step(X_data=X,Y_data=Y,YS_data=Y))
         print(res)
