@@ -116,9 +116,9 @@ class MultiClassificationGAN:
             self.D_loss = - tf.reduce_mean(tf.log(D_real) + 0.5*tf.log(1.0-D_fake) + 0.5*tf.log(1.0-D_classifer))
             self.D_real = D_real
             # 对于判别网络, 希望D_fake尽可能大，这样可以迷惑生成网络，
-            self.G_loss = tf.reduce_mean(tf.log(1.0 - D_fake))
+            self.G_loss = - tf.reduce_mean(tf.log(D_fake))
             # Classifier
-            self.C_loss2 = tf.reduce_mean(tf.log(1.0 - D_classifer))+ tf.reduce_mean(self.Y * tf.log(+ 1e-10+ self.Y / (predicted_Y + 1e-10)))
+            self.C_loss2 = - tf.reduce_mean(tf.log(D_classifer)) + tf.reduce_mean(self.Y * tf.log(+ 1e-10+ self.Y / (predicted_Y + 1e-10)))
 
             def optimize_with_clip(loss, var_list, global_step=None):
                 optimizer = tf.train.AdamOptimizer(0.0001)

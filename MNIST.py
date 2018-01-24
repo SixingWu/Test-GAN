@@ -35,25 +35,25 @@ for i in range(0,50000):
     YS = abs(Y_mask)
     YS = YS / np.sum(YS)
     res = gan.train_step( X_data=X, Y_data=Y, YS_data=YS)
-    if i % 2000 == 0:
+    if i % 200 == 0:
         print(time.time() - current_time)
         current_time = time.time()
 
         samples, labels = gan.figure_step(Y)
         #print(labels)
         print(gan.test_step(X_data=X,Y_data=Y))
-        try:
-            fig = plot(samples)
-            # plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
-            i += 1
-            plt.show()
-            plt.close(fig)
-        except Exception as e:
-            print(e)
-        finally:
-            try:
-                plt.close(fig)
-            except:
-                pass
+        # try:
+        #     fig = plot(samples)
+        #     # plt.savefig('out/{}.png'.format(str(i).zfill(3)), bbox_inches='tight')
+        #     i += 1
+        #     plt.show()
+        #     plt.close(fig)
+        # except Exception as e:
+        #     print(e)
+        # finally:
+        #     try:
+        #         plt.close(fig)
+        #     except:
+        #         pass
 
         print(res)
