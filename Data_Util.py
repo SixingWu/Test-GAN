@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 class DataUtil:
-    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1):
+    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0.3):
         log('loading Edge-Centic dataset form : %s' % (reindex_path))
         vertex_set = set()
         labels_set = set()
@@ -46,16 +46,28 @@ class DataUtil:
             label_list.append(array_to_multi_hot(labels1, num_class))
             vertex_list.append(vertex2)
             label_list.append(array_to_multi_hot(labels2, num_class))
-        log('transforming the done!')
-        log('training size : %d' % (len(vertex_list)))
+
         self.num_class = num_class
         self.num_vertex = len(vertex_set)
         self.x = np.array(vertex_list)
         self.y = np.array(label_list)
         self.ids = range(0, len(vertex_list))
+        self.test_num = int(len(self.ids) * test_rate)
+        self.train_num = len(self.ids) - self.test_num
+        self.ids = random.sample(self.ids,len(self.ids))
+        self.train_ids = self.ids[0: self.train_num]
+        self.test_ids = self.ids[self.train_num:]
 
-    def next_batch(self,batch_size):
-        batch_ids = np.array(random.sample(self.ids, batch_size), dtype=np.int32)
+        log('transforming the done!')
+        log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
+
+
+    def next_batch(self,batch_size, mode='train'):
+
+        if mode == 'train':
+            batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
+        elif mode == 'test':
+            batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
         x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
         return x,y
