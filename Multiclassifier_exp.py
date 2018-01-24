@@ -49,18 +49,22 @@ class MultiClassificationGAN:
     def _create_generator(self, z, y, output_dim, num_class, z_dim, device="/gpu:1"):
         with tf.device(device):
             y = tf.nn.softmax(y)
-            # Transform Y
-            G_W_all = self._weight_var([num_class, z_dim * output_dim], 'Generator_all')
-            G_b_all = self._bias_var([num_class, output_dim], 'Generator_b1')
+            # z2 = W * z1 + b
+            G_W2 = self._weight_var([self.config.middle_size, output_dim], 'G_W2')
+            G_b2 = self._bias_var([output_dim], 'G_B2')
 
-            var_list = [G_W_all, G_b_all]
+            # Transform Y
+            G_W_all = self._weight_var([num_class, z_dim * self.config.middle_size], 'Generator_all')
+            G_b_all = self._bias_var([num_class, self.config.middle_size], 'Generator_b1')
+
+            var_list = [G_W_all, G_b_all, G_W2, G_b2]
 
             # batch * z_dim * self.config.middle_size
-            G_W1 = tf.reshape(tf.matmul(y, G_W_all), [-1, z_dim, output_dim])
-            G_b1 = tf.reshape(tf.matmul(y, G_b_all), [-1, output_dim])
+            G_W1 = tf.reshape(tf.matmul(y, G_W_all), [-1, z_dim, self.config.middle_size])
+            G_b1 = tf.reshape(tf.matmul(y, G_b_all), [-1, self.config.middle_size])
             z = tf.reshape(z, [-1, 1, z_dim])
-            G_h1 = tf.nn.relu(tf.reshape(tf.matmul(z, G_W1), [-1, output_dim]) + G_b1)
-            G_log_prob = G_h1
+            G_h1 = tf.nn.relu(tf.reshape(tf.matmul(z, G_W1), [-1, self.config.middle_size]) + G_b1)
+            G_log_prob = tf.matmul(G_h1, G_W2) + G_b2
             G_prob = tf.sigmoid(G_log_prob)
             return G_prob, var_list
 
