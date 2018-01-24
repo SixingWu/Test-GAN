@@ -13,7 +13,7 @@ gan.init_session()
 
 for i in range(0,50000):
     X, Y = data.next_batch(config.batch_size)
-    res = gan.train_step( X_data=X, Y_data=Y, YS_data=Y)
+    res = gan.train_step(X_data=X, Y_data=Y, YS_data=Y)
     if i % 500 == 0:
         if i >0:
             gan.save_to_checkpoint()
