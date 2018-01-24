@@ -182,7 +182,7 @@ class MultiClassificationGAN:
     def train_step(self, X_data, Y_data, YS_data):
         # Discriminator
         batch_size = self.batch_size
-        _, D_loss_curr,D_real = self.sess.run([self.D_optimizer, self.D_loss,self.D_real], feed_dict={
+        _, D_loss_curr = self.sess.run([self.D_optimizer, self.D_loss], feed_dict={
             self.X_input: X_data, self.Z: self._sample_Z(batch_size), self.Y: Y_data, self.YS:YS_data})
         #
         # Generator & Classifier
@@ -194,7 +194,7 @@ class MultiClassificationGAN:
                                                  self.Y: Y_data})
 
         step = self.sess.run(self.global_step)
-        return step, D_loss_curr, G_loss_curr, C_loss_curr,D_real
+        return step, D_loss_curr, G_loss_curr, C_loss_curr
 
     def init_session(self, mode='Train'):
         log('initializing the model...')
