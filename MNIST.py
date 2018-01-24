@@ -39,7 +39,7 @@ for i in range(0,50000):
         current_time = time.time()
 
         samples, labels = gan.figure_step(Y)
-        print(labels)
+        #print(labels)
         print(gan.test_step(X_data=X,Y_data=Y))
         # try:
         #     fig = plot(samples)

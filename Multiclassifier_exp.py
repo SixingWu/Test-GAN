@@ -27,18 +27,21 @@ class MultiClassificationGAN:
             # Transform Y
             y = tf.nn.softmax(y)
 
-            D_W_all = self._weight_var([num_class, input_dim * num_class], 'Discriminator_all')
-            D_b_all = self._bias_var([num_class, num_class], 'Discriminator_b1')
+            D_W_all = self._weight_var([num_class, input_dim * self.config.middle_size], 'Discriminator_all')
+            D_b_all = self._bias_var([num_class, self.config.middle_size], 'Discriminator_b1')
 
             # batch * input_dim * self.config.middle_size
-            D_W1 = tf.reshape(tf.matmul(y, D_W_all), [-1, input_dim, num_class])
-            D_b1 = tf.reshape(tf.matmul(y, D_b_all), [-1, num_class])
+            D_W1 = tf.reshape(tf.matmul(y, D_W_all), [-1, input_dim, self.config.middle_size])
+            D_b1 = tf.reshape(tf.matmul(y, D_b_all), [-1, self.config.middle_size])
 
             # Generate Parameter
-            var_list = [D_W_all, D_b_all]
+
+            D_W2 = self._weight_var([self.config.middle_size, 1], 'Discriminator_W2')
+            D_b2 = self._bias_var([1], 'Discriminator_b2')
+            var_list = [D_W_all, D_b_all, D_W2, D_b2]
             x = tf.reshape(x, [-1, 1, input_dim])
-            D_h1 = tf.nn.relu(tf.reshape(tf.matmul(x, D_W1), [-1,num_class]) + D_b1)
-            D_logit = D_h1
+            D_h1 = tf.nn.relu(tf.reshape(tf.matmul(x, D_W1), [-1, self.config.middle_size]) + D_b1)
+            D_logit = tf.matmul(D_h1, D_W2) + D_b2
             D_prob = tf.nn.sigmoid(D_logit)
             D_prob = tf.clip_by_value(D_prob, 1e-8, 1.0 - 1e-8)
             return D_prob, D_logit, var_list
@@ -151,9 +154,9 @@ class MultiClassificationGAN:
         num_class = self.config.num_class
 
         Y_data = [[i for i in range(num_class)] for x in X_data]
-        print(np.shape(Y_data))
+        # print(np.shape(Y_data))
         X_data = [[x for i in range(num_class)] for x in X_data]
-        print(np.shape(X_data))
+        # print(np.shape(X_data))
         Y_data = np.reshape(Y_data, [-1])
         X_data = np.reshape(X_data, [-1, self.config.input_dim])
         Y_data = one_hot(Y_data, num_class)
@@ -163,7 +166,7 @@ class MultiClassificationGAN:
 
         # batch_size * num_class
         probs = np.reshape(probs, [-1, num_class])
-        print(probs)
+        # print(probs)
         predict_label = np.argmax(probs, axis=-1)
         return predict_label
 
