@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 class DataUtil:
-    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0.3):
+    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0.3, sample_mode=True):
         log('loading Edge-Centic dataset form : %s' % (reindex_path))
         vertex_set = set()
         labels_set = set()
@@ -54,9 +54,13 @@ class DataUtil:
         self.ids = range(0, len(vertex_list))
         self.test_num = int(len(self.ids) * test_rate)
         self.train_num = len(self.ids) - self.test_num
-        self.ids = random.sample(self.ids,len(self.ids))
+        if sample_mode:
+            print('Sample Mode')
+            self.ids = random.sample(self.ids,len(self.ids))
         self.train_ids = self.ids[0: self.train_num]
         self.test_ids = self.ids[self.train_num:]
+
+        self.infer_step = 0
 
         log('transforming the done!')
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
@@ -71,6 +75,15 @@ class DataUtil:
         x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
         return x,y
+
+    def next_infer_batch(self,batch_size):
+        if self.infer_step < len(self.x):
+            batch_ids = np.array(self.train_ids[self.infer_step,self.infer_step+batch_size],dtype=np.int32)
+            x = np.array(self.adj_matrix[self.x[batch_ids], :])
+            self.infer_step += batch_size
+            return x
+        else:
+            return None
 
 
 if __name__ =='__main__':
