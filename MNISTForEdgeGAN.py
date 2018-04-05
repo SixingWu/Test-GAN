@@ -30,10 +30,13 @@ gan.init_session()
 current_time = time.time()
 for i in range(0,50000):
     X, Y = mnist.train.next_batch(config.batch_size)
-    Y_mask = random.random_integers(0, 1, np.shape(Y)) + 0.0
-    Y_mask -= Y
-    Y_mask = np.maximum(0,Y_mask)
-    YS = abs(Y_mask)
-    YS = YS / np.sum(YS)
     res = gan.train_step(X_data=X, Y_data=Y)
-    print(res)
+    if i % 100 == 0:
+        print(res)
+    if i % 1000 == 0:
+        X, Y = mnist.train.next_batch(5)
+        probs = gan.infer_step(X_data=X, Multiple_Y_data=Y)
+        print("Testing:#########")
+        print(Y)
+        print(probs)
+        print("Testing:#########")
