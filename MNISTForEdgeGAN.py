@@ -21,6 +21,23 @@ def plot(samples):
 
     return fig
 
+def do_infer(config,X_data):
+    num_class = config.num_class
+    MX = []
+    MY = []
+    for x in X_data:
+        for i in range(num_class):
+            MX.append(x)
+            y = np.zeros([num_class])
+            y[i] = 1.0
+            MY.append(y)
+
+    probs = gan.infer_step(MX,MY)
+    probs = np.reshape(probs,[-1, num_class])
+    lables = np.argmax(probs, axis=-1)
+    return probs,lables
+
+
 config = Config()
 config.batch_size=16
 gan = EdgeGAN(config)
@@ -34,9 +51,16 @@ for i in range(0,50000):
     if i % 100 == 0:
         print(res)
     if i % 1000 == 0:
-        X, Y = mnist.train.next_batch(5)
-        probs = gan.infer_step(X_data=X, Multiple_Y_data=Y)
+        X, Y = mnist.train.next_batch(config.batch_size)
+        probs = do_infer(config,X)
         print("Testing:#########")
-        print(Y)
-        print(probs)
+        print(np.argmax(Y, axis=-1))
+        print(probs[1])
+
+        truth = np.argmax(Y, axis=-1)
+        probs[1]
+        print(sum([a==b for (a,b) in zip(truth,probs[1])]))
         print("Testing:#########")
+
+
+
