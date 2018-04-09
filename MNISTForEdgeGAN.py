@@ -27,7 +27,7 @@ def do_infer(config,X_data):
 
 #data = input_data.read_data_sets('MNIST_data', one_hot=True).train
 path = '/Users/mebiuw/Downloads/small_set.txt'
-path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eca_blogCatalog3.txt.labeled.reindex'
+path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
 data = DataUtil(path)
 config = Config()
 config.x_dim = data.num_vertex
