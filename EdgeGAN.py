@@ -199,7 +199,7 @@ class EdgeGAN:
 
     def init_session(self):
         config = tf.ConfigProto(allow_soft_placement=True,
-                                log_device_placement=True)
+                                log_device_placement=False)
         config.gpu_options.allow_growth = True
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
