@@ -237,6 +237,6 @@ class EdgeGAN:
         Z = self._sample_Z(batch_size)
         probs = self.sess.run([self.classifier_res], feed_dict={
             self.X: X_data, self.Y: Y_data})
-        return probs
+        return probs[0]
 
 
