@@ -28,7 +28,7 @@ def do_infer(config,X_data):
 #data = input_data.read_data_sets('MNIST_data', one_hot=True).train
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-debug = True
+debug = False
 path = '/Users/mebiuw/Downloads/small_set.txt'
 path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
 config = Config()
