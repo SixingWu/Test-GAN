@@ -22,8 +22,8 @@ class DataUtil:
                 vertex1 = int(items[0])
                 vertex2 = int(items[1])
                 weight = float(items[2])
-                labels1 = [int(x) for x in items[3].split(' ')]
-                labels2 = [int(x) for x in items[4].split(' ')]
+                labels1 = [int(x)-1 for x in items[3].split(' ')]
+                labels2 = [int(x)-1 for x in items[4].split(' ')]
                 overlap_ratio = float(items[5])
                 vertex_set.add(vertex1)
                 vertex_set.add(vertex2)
@@ -38,7 +38,7 @@ class DataUtil:
         log('transforming the dataset')
         n = len(vertex_set)
         self.adj_matrix = np.eye(n)
-        num_class = len(labels_set) + 1
+        num_class = len(labels_set)
         for vertex1,labels1,vertex2,labels2 in tmp:
             self.adj_matrix[vertex1][vertex2] = 1
             self.adj_matrix[vertex2][vertex1] = 1
