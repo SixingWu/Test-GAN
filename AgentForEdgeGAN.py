@@ -65,7 +65,7 @@ for i in range(0,50000):
         for y_line in Y:
             res = set()
             for index, y in enumerate(y_line):
-                if y > 0.9999:
+                if y > 0:
                     res.add(index)
                     base_scores += 1
             truth.append(res)
