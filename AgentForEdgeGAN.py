@@ -46,15 +46,28 @@ for i in range(0,50000):
     if i % 100 == 0:
         print(res)
     if i % 1000 == 0:
-        X, Y = data.next_batch(config.batch_size)
+        X, Y = data.next_batch(config.batch_size,mode='test')
         probs = do_infer(config,X)
         print("Testing:#########")
-        print(np.argmax(Y, axis=-1))
-        print(probs[1])
+        base_scores = 0
+        truth = []
+        for y_line in Y:
+            res = set()
+            for index, y in enumerate(y_line):
+                if y == 1:
+                    res.add(index+1)
+                    base_scores += 1
+            truth.append(truth)
+        base_scores /= (3 * len(Y))
 
-        truth = np.argmax(Y, axis=-1)
-        probs[1]
-        print(sum([a==b for (a,b) in zip(truth,probs[1])]))
+        answers = np.argmax(probs, axis=-1)
+        acc = 0
+        for index, answer in enumerate(answers):
+            if answer in truth[i]:
+                acc += 1
+
+        print(answers)
+        print("%f\t%f" % (base_scores, acc/len(Y)))
         print("Testing:#########")
 
 
