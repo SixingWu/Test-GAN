@@ -112,7 +112,7 @@ class EdgeGAN:
         :return:
         """
         config = self.config
-        with tf.variable_scope(name):
+        with tf.variable_scope(name, reuse=tf.AUTO_REUSE):
             dtype = config.dtype
             W = self._weight_var([config.x_dim, config.num_class], 'W', dtype=dtype)
             b = self._bias_var([config.num_class], 'b', dtype=dtype)
