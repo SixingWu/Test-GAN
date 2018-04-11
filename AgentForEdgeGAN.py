@@ -28,7 +28,7 @@ def do_infer(config,X_data):
 #data = input_data.read_data_sets('MNIST_data', one_hot=True).train
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-debug = False
+debug = True
 path = '/Users/mebiuw/Downloads/small_set.txt'
 path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
 config = Config()
@@ -37,8 +37,13 @@ if not debug:
     config.x_dim = data.num_vertex
     config.input_dim = data.num_vertex
     config.num_class = data.num_class
-
     config.batch_size=16
+else:
+    data = DataUtil(max_line=10000)
+    config.x_dim = data.num_vertex
+    config.input_dim = data.num_vertex
+    config.num_class = data.num_class
+    config.batch_size = 16
 gan = EdgeGAN(config)
 gan.build_graph()
 gan.init_session()
@@ -47,7 +52,7 @@ current_time = time.time()
 
 for i in range(0,50000):
     if debug:
-        X, Y =mnist.train.next_batch(config.batch_size)
+        X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'train')
     else:
         X, Y,h,t,ih,it = data.next_batch(config.batch_size)
     res = gan.train_step(X,Y,h,t,ih,it)
@@ -55,7 +60,7 @@ for i in range(0,50000):
         print(res)
     if i % 1000 == 0:
         if debug:
-            X, Y = mnist.test.next_batch(config.batch_size)
+            X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'test')
         else:
             X, Y,h,t,ih,it = data.next_batch(config.batch_size,'test')
         probs,answers = do_infer(config,X)

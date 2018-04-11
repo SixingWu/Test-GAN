@@ -170,7 +170,7 @@ class EdgeGAN:
 
         r = 0.5
         m = 0.3
-        contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0,cosine(ih_prob,it_prob)-m))
+        self.contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0.0,cosine(ih_prob,it_prob)-m))
 
 
 
@@ -197,7 +197,7 @@ class EdgeGAN:
         self.train_generator_op = self.optimize_with_clip(self.generator_loss, var_list=g_paras+d_paras+l_paras)
         self.classifier_loss = tf.reduce_mean(KL_term)
         self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras, global_step=self.global_step)
-        self.train_contrasive_op = self.optimize_with_clip(contrasive_loss, var_list=c_paras)
+        self.train_contrasive_op = self.optimize_with_clip(self.contrasive_loss, var_list=c_paras)
         # TODO Cosine 距离
 
         self.debug =  [] # [ECEE,CEE,prob_Y,self.Y]
@@ -239,7 +239,7 @@ class EdgeGAN:
             self.X: X_data, self.Z: Z, self.Y: Y_data})
         _, classifier_loss = self.sess.run([self.train_classifier_op, self.classifier_loss], feed_dict={
             self.X: X_data, self.Z: Z, self.Y: Y_data})
-        _, contrasive_loss = self.sess.run([self.train_contrasive_op, self.classifier_loss], feed_dict={
+        _, contrasive_loss = self.sess.run([self.train_contrasive_op, self.contrasive_loss], feed_dict={
             self.h:h, self.ih:ih, self.t:t,self.it:it})
         debug= self.sess.run([self.debug], feed_dict={
             self.X: X_data, self.Z: Z, self.Y: Y_data,  self.h:h, self.ih:ih, self.t:t,self.it:it})
