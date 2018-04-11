@@ -116,6 +116,7 @@ class EdgeGAN:
             dtype = config.dtype
             W = self._weight_var([config.x_dim, config.num_class], 'W', dtype=dtype)
             b = self._bias_var([config.num_class], 'b', dtype=dtype)
+            # TODO +ReLU
             logits = tf.matmul(x,W) + b
             probs = tf.nn.softmax(logits, dim=-1)
             trainable_parameters = [W, b]
@@ -136,23 +137,42 @@ class EdgeGAN:
         self.Y = tf.placeholder(config.dtype, shape=[None, config.num_class], name='Y')
         self.Z = tf.placeholder(config.dtype, shape=[None, config.z_dim], name='Y')
 
+        self.h = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='Head')
+        self.ih = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='IncorrectHead')
+        self.t = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='Tail')
+        self.it = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='IncorrectTail')
+
         """
         for Discrminator
         """
 
         # Maximize
         d_probs, d_paras = self.create_discriminator_or_learner("Discriminator", self.X, self.Y)
-
-
         classifier_logits, classifier_Y, c_paras = self.create_classifer("Classifier",self.X)
-
         l_probs, l_paras = self.create_discriminator_or_learner("Learner", self.X, classifier_Y)
-
-
         Generated_X, g_paras = self.create_generator("Generator",self.Y,self.Z)
-
         gd_probs, _ = self.create_discriminator_or_learner("Discriminator", Generated_X, self.Y)
         gl_probs, _ = self.create_discriminator_or_learner("Learner", Generated_X, self.Y)
+        # Contrastive Loss
+
+
+        def cosine(x,y):
+            term1 = tf.reduce_sum(tf.multiply(x,y), axis=-1)
+            term2 = tf.sqrt(tf.reduce_sum(tf.multiply(x,x), axis=-1))
+            term3 = tf.sqrt(tf.reduce_sum(tf.multiply(y,y), axis=-1))
+            res = term1/ (term3*term2)
+            return res
+
+        _, h_prob, _ = self.create_classifer("Classifier", self.h)
+        _, ih_prob, _ = self.create_classifer("Classifier", self.ih)
+        _, t_prob, _ = self.create_classifer("Classifier", self.t)
+        _, it_prob, _ = self.create_classifer("Classifier", self.it)
+
+        r = 0.5
+        m = 0.3
+        contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0,cosine(ih_prob,it_prob)-m))
+
+
 
 
         prob_Y = self.y_to_probs(self.Y)
@@ -177,7 +197,7 @@ class EdgeGAN:
         self.train_generator_op = self.optimize_with_clip(self.generator_loss, var_list=g_paras+d_paras+l_paras)
         self.classifier_loss = tf.reduce_mean(KL_term)
         self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras, global_step=self.global_step)
-
+        self.train_contrasive_op = self.optimize_with_clip(contrasive_loss, var_list=c_paras)
         # TODO Cosine 距离
 
         self.debug =  [] # [ECEE,CEE,prob_Y,self.Y]
@@ -207,7 +227,7 @@ class EdgeGAN:
     """
     Training
     """
-    def train_step(self,X_data, Y_data):
+    def train_step(self,X_data, Y_data,h,t,ih,it):
         # Discriminator
         batch_size = self.config.batch_size
         Z = self._sample_Z(batch_size)
@@ -219,11 +239,13 @@ class EdgeGAN:
             self.X: X_data, self.Z: Z, self.Y: Y_data})
         _, classifier_loss = self.sess.run([self.train_classifier_op, self.classifier_loss], feed_dict={
             self.X: X_data, self.Z: Z, self.Y: Y_data})
+        _, contrasive_loss = self.sess.run([self.train_contrasive_op, self.classifier_loss], feed_dict={
+            self.h:h, self.ih:ih, self.t:t,self.it:it})
         debug= self.sess.run([self.debug], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.X: X_data, self.Z: Z, self.Y: Y_data,  self.h:h, self.ih:ih, self.t:t,self.it:it})
         step = self.sess.run(self.global_step)
 
-        loss = [discriminator_loss,learner_loss,generator_loss,classifier_loss,debug]
+        loss = [discriminator_loss,learner_loss,generator_loss,classifier_loss,contrasive_loss,debug]
         #loss = classifier_loss
         return step, loss
 

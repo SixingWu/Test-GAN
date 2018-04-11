@@ -49,15 +49,15 @@ for i in range(0,50000):
     if debug:
         X, Y =mnist.train.next_batch(config.batch_size)
     else:
-        X, Y = data.next_batch(config.batch_size)
-    res = gan.train_step(X_data=X, Y_data=Y)
+        X, Y,h,t,ih,it = data.next_batch(config.batch_size)
+    res = gan.train_step(X,Y,h,t,ih,it)
     if i % 100 == 0:
         print(res)
     if i % 1000 == 0:
         if debug:
             X, Y = mnist.test.next_batch(config.batch_size)
         else:
-            X, Y = data.next_batch(config.batch_size,'test')
+            X, Y,h,t,ih,it = data.next_batch(config.batch_size,'test')
         probs,answers = do_infer(config,X)
         print("Testing:#########")
         base_scores = 0

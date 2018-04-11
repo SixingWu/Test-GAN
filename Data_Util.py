@@ -11,6 +11,7 @@ class DataUtil:
         vertex_list = list()
         label_list = list()
         vertex_label = dict()
+        edge_set = set()
         tmp = list()
         with open(reindex_path,'r+',encoding='utf-8') as fin:
             lines = fin.readlines()
@@ -21,6 +22,8 @@ class DataUtil:
                 items = line.strip('\n').split('\t')
                 vertex1 = int(items[0])
                 vertex2 = int(items[1])
+                edge_set.add((vertex1,vertex2))
+                edge_set.add((vertex2,vertex1))
                 weight = float(items[2])
                 labels1 = [int(x)-1 for x in items[3].split(' ')]
                 labels2 = [int(x)-1 for x in items[4].split(' ')]
@@ -61,6 +64,7 @@ class DataUtil:
         self.test_ids = self.ids[self.train_num:]
 
         self.infer_step = 0
+        self.edge_set = edge_set
 
         log('transforming the done!')
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
@@ -68,13 +72,31 @@ class DataUtil:
 
     def next_batch(self,batch_size, mode='train'):
 
+        h = []
+        t = []
+        ih = []
+        it = []
         if mode == 'train':
             batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
+            correct_relations = random.sample(self.edge_set, batch_size)
+            h = [x[0] for x in correct_relations]
+            t = [x[1] for x in correct_relations]
+            ## incorrect TODO optimize
+            ih = [x[0] for x in correct_relations]
+            for x in ih:
+                y = random.randint(0,self.num_vertex-1)
+                while (x,y) in self.edge_set or x==y:
+                    y = random.randint(0, self.num_vertex - 1)
+                it.append(y)
+            h = self.adj_matrix[h]
+            t = self.adj_matrix[t]
+            ih = self.adj_matrix[ih]
+            it = self.adj_matrix[it]
         elif mode == 'test':
             batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
         x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
-        return x,y
+        return x, y,h,t,ih,it
 
     def next_infer_batch(self,batch_size):
         if self.infer_step < len(self.x):
@@ -87,7 +109,7 @@ class DataUtil:
 
 
 if __name__ =='__main__':
-    test = DataUtil(max_line=100)
-    x, y = test.next_batch(2)
+    test = DataUtil(max_line=10000)
+    x, y,h,t,ih,it = test.next_batch(2)
     print(x)
     print(np.shape(x))
