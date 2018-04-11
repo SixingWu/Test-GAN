@@ -66,6 +66,13 @@ class DataUtil:
         self.infer_step = 0
         self.edge_set = edge_set
 
+        self.iedge_set = set()
+        for i in range(self.num_vertex):
+            for j in range(i+1, self.num_vertex):
+                if (i,j) not in self.edge_set:
+                    self.iedge_set.add((i,j))
+                    self.iedge_set.add((j,i))
+
         log('transforming the done!')
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
 
@@ -79,15 +86,11 @@ class DataUtil:
         if mode == 'train':
             batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
             correct_relations = random.sample(self.edge_set, batch_size)
+            incorrect_relations = random.sample(self.iedge_set, batch_size)
             h = [x[0] for x in correct_relations]
             t = [x[1] for x in correct_relations]
-            ## incorrect TODO optimize
-            ih = [x[0] for x in correct_relations]
-            for x in ih:
-                y = random.randint(0,self.num_vertex-1)
-                while (x,y) in self.edge_set or x==y:
-                    y = random.randint(0, self.num_vertex - 1)
-                it.append(y)
+            ih = [x[0] for x in incorrect_relations]
+            it = [x[1] for x in incorrect_relations]
             h = self.adj_matrix[h]
             t = self.adj_matrix[t]
             ih = self.adj_matrix[ih]
