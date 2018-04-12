@@ -59,6 +59,7 @@ for i in range(0,50000):
     if i % 100 == 0:
         print(res)
     if i % 1000 == 0:
+        data.generate_negative_set()
         if debug:
             X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'test')
         else:

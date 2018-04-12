@@ -72,6 +72,18 @@ class DataUtil:
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
 
 
+    def generate_negative_set(self,num=100000):
+        self.iedge_set = set()
+        x = 0
+        y = 0
+        print('Sampling negatives')
+        while(len(self.iedge_set) < num):
+            while x==y or (x,y) in self.edge_set:
+                x = np.random.randint(0, self.num_vertex)
+                y = np.random.randint(0, self.num_vertex)
+                self.iedge_set.add((x,y))
+        print('Done')
+
     def next_batch(self,batch_size, mode='train'):
 
         h = []
@@ -81,14 +93,7 @@ class DataUtil:
         if mode == 'train':
             batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
             correct_relations = random.sample(self.edge_set, batch_size)
-            incorrect_relations = []
-            while len(incorrect_relations) < batch_size:
-                x = 0
-                y = 0
-                while x==y or (x,y) in self.edge_set:
-                    x = np.random.randint(0,self.num_vertex)
-                    y = np.random.randint(0,self.num_vertex)
-                incorrect_relations.append((x,y))
+            incorrect_relations = random.sample(self.iedge_set, batch_size)
             h = [x[0] for x in correct_relations]
             t = [x[1] for x in correct_relations]
             ih = [x[0] for x in incorrect_relations]
