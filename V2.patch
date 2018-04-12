@@ -1,0 +1,45 @@
+Index: EdgeGAN.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- EdgeGAN.py	(revision fef67597ee86bb7f6cb6d78006a6560cbe96f9c9)
++++ EdgeGAN.py	(date 1523365654767)
+@@ -237,6 +237,6 @@
+         Z = self._sample_Z(batch_size)
+         probs = self.sess.run([self.classifier_res], feed_dict={
+             self.X: X_data, self.Y: Y_data})
+-        return probs
++        return probs[0]
+ 
+ 
+Index: NETEMB-Copy1.py
+===================================================================
+--- NETEMB-Copy1.py	(revision fef67597ee86bb7f6cb6d78006a6560cbe96f9c9)
++++ NETEMB-Copy1.py	(revision fef67597ee86bb7f6cb6d78006a6560cbe96f9c9)
+@@ -1,24 +0,0 @@
+-from Multiclassifier_exp import MultiClassificationGAN
+-from config import Config
+-from Data_Util import DataUtil
+-
+-data = DataUtil('/ldev/wsx/tmp/netemb/github/dataset/generated_data/eca_blogCatalog3.txt.labeled.reindex' )
+-config = Config()
+-config.x_dim = data.num_vertex
+-config.input_dim = data.num_vertex
+-config.num_class = data.num_class
+-config.checkpoint_path = 'netemb_eca_blogCatalog3/'
+-gan = MultiClassificationGAN(config)
+-gan.init_session()
+-
+-for i in range(0,50000):
+-    X, Y = data.next_batch(config.batch_size)
+-    res = gan.train_step(X_data=X, Y_data=Y, YS_data=Y)
+-    if i % 100 == 0:
+-        if i >0 and i % 2000 == 0:
+-            gan.save_to_checkpoint()
+-        samples, labels = gan.figure_step(Y)
+-        #print(labels)
+-        X, Y = data.next_batch(config.batch_size,mode='test')
+-        print(gan.test_step(X_data=X,Y_data=Y))
+-        print(res)
+\ No newline at end of file
