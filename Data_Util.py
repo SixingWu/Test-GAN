@@ -122,6 +122,7 @@ class DataUtil:
 if __name__ =='__main__':
     test = DataUtil(max_line=100000)
     test.generate_negative_set(10000)
-    x, y,h,t,ih,it = test.next_batch(2)
-    print(x)
-    print(np.shape(x))
+    for i in range(0,5000):
+        x, y,h,t,ih,it = test.next_batch(128)
+        print(x)
+        print(np.shape(x))

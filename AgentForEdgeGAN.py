@@ -28,19 +28,20 @@ def do_infer(config,X_data):
 #data = input_data.read_data_sets('MNIST_data', one_hot=True).train
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-debug = False
-path = '/Users/mebiuw/Downloads/small_set.txt'
+debug = True
 path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
 config = Config()
 if not debug:
+    print('normal mode')
     data = DataUtil(path)
     config.x_dim = data.num_vertex
     config.input_dim = data.num_vertex
     config.num_class = data.num_class
-    config.batch_size=16
+    config.batch_size = 16
     data.generate_negative_set()
 else:
-    data = DataUtil(max_line=10000)
+    path = r'C:\Users\v-sixwu\Downloads\all.txt'
+    data = DataUtil(path)
     config.x_dim = data.num_vertex
     config.input_dim = data.num_vertex
     config.num_class = data.num_class
