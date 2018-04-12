@@ -239,10 +239,10 @@ class EdgeGAN:
             self.X: X_data, self.Z: Z, self.Y: Y_data})
         _, classifier_loss = self.sess.run([self.train_classifier_op, self.classifier_loss], feed_dict={
             self.X: X_data, self.Z: Z, self.Y: Y_data})
-        #_, contrasive_loss = self.sess.run([self.train_contrasive_op, self.contrasive_loss], feed_dict={
-        #    self.h:h, self.ih:ih, self.t:t,self.it:it})
+        _, contrasive_loss = self.sess.run([self.train_contrasive_op, self.contrasive_loss], feed_dict={
+            self.h:h, self.ih:ih, self.t:t,self.it:it})
         debug= self.sess.run([self.debug], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data,  self.h:h, self.ih:ih, self.t:t,self.it:it})
+            self.X: X_data, self.Z: Z, self.Y: Y_data})
         step = self.sess.run(self.global_step)
 
         loss = [discriminator_loss,learner_loss,generator_loss,classifier_loss,contrasive_loss,debug]

@@ -2,6 +2,7 @@ from Util import log
 from Util import array_to_multi_hot
 import random
 import numpy as np
+from multiprocessing import Pool  
 
 class DataUtil:
     def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0.3, sample_mode=True):
@@ -65,6 +66,7 @@ class DataUtil:
 
         self.infer_step = 0
         self.edge_set = edge_set
+        self.edge_list = list(edge_set)
 
         self.iedge_set = set()
 
@@ -72,17 +74,32 @@ class DataUtil:
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
 
 
-    def generate_negative_set(self,num=100000):
+    def generate_negative_set(self,num=10000):
         self.iedge_set = set()
-
+        self.h = []
+        self.t = []
+        self.ih = []
+        self.it = []
         print('Sampling negatives')
-        while(len(self.iedge_set) < num):
+        self.train_ids2 = range(num)
+        while(len(self.ih) < num):
             x = 0
             y = 0
             while x==y or (x,y) in self.edge_set:
-                x = np.random.randint(0, self.num_vertex)
-                y = np.random.randint(0, self.num_vertex)
-            self.iedge_set.add((x,y))
+                x = np.random.randint(0, self.num_vertex-1)
+                y = np.random.randint(0, self.num_vertex-1)
+            self.ih.append(self.adj_matrix[x])
+            self.it.append(self.adj_matrix[y])
+            i = np.random.randint(0, len(self.edge_list))
+            (x,y) = self.edge_list[i]
+            self.h.append(self.adj_matrix[x])
+            self.t.append(self.adj_matrix[y])
+            
+        self.h = np.array(self.h)
+        self.ih = np.array(self.ih)
+        self.t = np.array(self.t)
+        self.it = np.array(self.it)
+                
         print('Done')
 
     def next_batch(self,batch_size, mode='train'):
@@ -93,16 +110,12 @@ class DataUtil:
         it = []
         if mode == 'train':
             batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
-            correct_relations = random.sample(self.edge_set, batch_size)
-            incorrect_relations = random.sample(self.iedge_set, batch_size)
-            h = [x[0] for x in correct_relations]
-            t = [x[1] for x in correct_relations]
-            ih = [x[0] for x in incorrect_relations]
-            it = [x[1] for x in incorrect_relations]
-            h = self.adj_matrix[h]
-            t = self.adj_matrix[t]
-            ih = self.adj_matrix[ih]
-            it = self.adj_matrix[it]
+            batch_ids2 = np.array(random.sample(self.train_ids2, batch_size), dtype=np.int32)
+            h = self.h[batch_ids2]
+            t = self.t[batch_ids2]
+            ih = self.ih[batch_ids2]
+            it = self.it[batch_ids2]
+
         elif mode == 'test':
             batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
         x = np.array(self.adj_matrix[self.x[batch_ids],:])
@@ -121,7 +134,7 @@ class DataUtil:
 
 if __name__ =='__main__':
     test = DataUtil(max_line=100000)
-    test.generate_negative_set(10000)
+    test.generate_negative_set()
     for i in range(0,5000):
         x, y,h,t,ih,it = test.next_batch(128)
         print(x)
