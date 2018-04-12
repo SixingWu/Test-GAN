@@ -74,14 +74,15 @@ class DataUtil:
 
     def generate_negative_set(self,num=100000):
         self.iedge_set = set()
-        x = 0
-        y = 0
+
         print('Sampling negatives')
         while(len(self.iedge_set) < num):
+            x = 0
+            y = 0
             while x==y or (x,y) in self.edge_set:
                 x = np.random.randint(0, self.num_vertex)
                 y = np.random.randint(0, self.num_vertex)
-                self.iedge_set.add((x,y))
+            self.iedge_set.add((x,y))
         print('Done')
 
     def next_batch(self,batch_size, mode='train'):
@@ -119,7 +120,8 @@ class DataUtil:
 
 
 if __name__ =='__main__':
-    test = DataUtil(max_line=10000)
+    test = DataUtil(max_line=100000)
+    test.generate_negative_set(10000)
     x, y,h,t,ih,it = test.next_batch(2)
     print(x)
     print(np.shape(x))
