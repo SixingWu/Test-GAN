@@ -38,15 +38,18 @@ if not debug:
     config.input_dim = data.num_vertex
     config.num_class = data.num_class
     config.batch_size=16
+    data.generate_negative_set()
 else:
     data = DataUtil(max_line=10000)
     config.x_dim = data.num_vertex
     config.input_dim = data.num_vertex
     config.num_class = data.num_class
     config.batch_size = 16
+    data.generate_negative_set(1000)
 gan = EdgeGAN(config)
 gan.build_graph()
 gan.init_session()
+
 
 current_time = time.time()
 
