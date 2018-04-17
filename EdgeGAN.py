@@ -129,6 +129,13 @@ class EdgeGAN:
 
     def build_graph(self):
         config = self.config
+
+
+        """
+        Graph
+        """
+        # TODO
+
         """
         Placeholders
         """

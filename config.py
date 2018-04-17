@@ -1,7 +1,15 @@
 import tensorflow as tf
 class Config:
-    # checkpoint_path
+    # training process
     batch_size = 32
+    show_res_per_steps = 100
+    internal_test_per_steps = 10 * show_res_per_steps
+    checkpoint_per_steps = 10 * show_res_per_steps
+    negative_sampling_per_step = 10 * show_res_per_steps
+    negative_sampling_ratio = 1
+    epochs = 10
+    # checkpoint_path
+
     checkpoint_path = 'model/'
     steps_per_epoch = 10000
     epochs = 10
