@@ -139,7 +139,6 @@ class DataUtil:
                 self.epcoh_steps = 0
                 raise EOFError('All data have been traversed !')
 
-
             self.global_steps += 1
             self.epcoh_steps += 1
 
