@@ -240,6 +240,12 @@ class EdgeGAN:
             print('does not find the checkpoint, use fresh parameters')
             self.sess.run(tf.global_variables_initializer())
 
+    def save_to_checkpoint(self, path=None):
+        if path is None:
+            path = self.config.checkpoint_path
+        self.saver.save(self.sess, path + 'model.ckpt', global_step=self.global_step)
+        print('checkpoint has been saved to :' + path + 'model.ckpt')
+
     """
     Training
     """

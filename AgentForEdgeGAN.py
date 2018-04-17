@@ -28,7 +28,7 @@ def do_infer(config,X_data):
 #data = input_data.read_data_sets('MNIST_data', one_hot=True).train
 
 mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
-debug = False
+debug = True
 path = '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
 config = Config()
 if not debug:
@@ -63,6 +63,7 @@ for i in range(0,50000):
     if i % 100 == 0:
         print(res)
     if i % 1000 == 0:
+        gan.save_to_checkpoint()
         if i % 10000 == 0:
             data.generate_negative_set()
         if debug:
