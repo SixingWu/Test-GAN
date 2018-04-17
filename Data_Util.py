@@ -73,6 +73,10 @@ class DataUtil:
         log('transforming the done!')
         log('train size : %d,  test size: %d' % (self.train_num, self.test_num))
 
+        # 全局的计步器和局部的计步器
+        self.global_steps = 0
+        self.epcoh_steps = 0
+
 
     def generate_negative_set(self,num=10000):
         self.iedge_set = set()
@@ -102,7 +106,7 @@ class DataUtil:
                 
         print('Done')
 
-    def next_batch(self,batch_size, mode='train'):
+    def random_next_batch(self,batch_size, mode='train'):
 
         h = []
         t = []
@@ -115,6 +119,37 @@ class DataUtil:
             t = self.t[batch_ids2]
             ih = self.ih[batch_ids2]
             it = self.it[batch_ids2]
+
+        elif mode == 'test':
+            batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
+        x = np.array(self.adj_matrix[self.x[batch_ids],:])
+        y = np.array(self.y[batch_ids])
+        return x, y,h,t,ih,it
+
+    def next_batch(self, batch_size, mode='train'):
+
+        h = []
+        t = []
+        ih = []
+        it = []
+        if mode == 'train':
+            start = batch_size * self.epcoh_steps
+            end = min(start + batch_size, len(self.train_ids))
+            if start >= len(self.train_ids):
+                self.epcoh_steps = 0
+                raise EOFError('All data have been traversed !')
+
+
+            self.global_steps += 1
+            self.epcoh_steps += 1
+
+            batch_ids = np.array(self.train_ids[start:end], dtype=np.int32)
+            batch_ids2 = np.array(random.sample(self.train_ids2, batch_size), dtype=np.int32)
+            h = self.h[batch_ids2]
+            t = self.t[batch_ids2]
+            ih = self.ih[batch_ids2]
+            it = self.it[batch_ids2]
+
 
         elif mode == 'test':
             batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)

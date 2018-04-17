@@ -53,40 +53,49 @@ gan.init_session()
 
 current_time = time.time()
 
-for i in range(0,50000):
-    X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'train')
-    res = gan.train_step(X, Y, h, t, ih, it)
-    if i % config.show_res_per_steps == 0:
-        print(res)
-    if i % config.checkpoint_per_steps == 0:
-        gan.save_to_checkpoint()
-    if i % config.negative_sampling_per_step == 0:
-            negative_tuple_nums = config.batch_size * config.negative_sampling_per_step
-            data.generate_negative_set(negative_tuple_nums)
-    if i % config.internal_test_per_steps == 0:
-            X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'test')
-            probs,answers = do_infer(config,X)
-            print("Testing:#########")
-            base_scores = 0
-            truth = []
-            for y_line in Y:
-                res = set()
-                for index, y in enumerate(y_line):
-                    if y > 0:
-                        res.add(index)
-                        base_scores += 1
-                truth.append(res)
-            base_scores /= (config.num_class * len(Y))
+for epoch in range(config.epochs):
+    print("Epoch %d start" % epoch)
+    i = -1
+    while True:
+        i += 1
+        try:
+            X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'train')
+        except EOFError as e:
+            print(e)
+            print("Epoch %d is finished" % epoch)
+            break;
+        res = gan.train_step(X, Y, h, t, ih, it)
+        if i % config.show_res_per_steps == 0:
+            print(res)
+        if i % config.checkpoint_per_steps == 0:
+            gan.save_to_checkpoint()
+        if i % config.negative_sampling_per_step == 0:
+                negative_tuple_nums = config.batch_size * config.negative_sampling_per_step
+                data.generate_negative_set(negative_tuple_nums)
+        if i % config.internal_test_per_steps == 0:
+                X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'test')
+                probs,answers = do_infer(config,X)
+                print("Testing:#########")
+                base_scores = 0
+                truth = []
+                for y_line in Y:
+                    res = set()
+                    for index, y in enumerate(y_line):
+                        if y > 0:
+                            res.add(index)
+                            base_scores += 1
+                    truth.append(res)
+                base_scores /= (config.num_class * len(Y))
 
 
-            acc = 0
-            for index, answer in enumerate(answers):
-                if answer in truth[index]:
-                    acc += 1
-            print(np.argmax(Y, axis=-1))
-            print(answers)
-            print("%f\t%f" % (base_scores, acc/len(Y)))
-            print("Testing:#########")
+                acc = 0
+                for index, answer in enumerate(answers):
+                    if answer in truth[index]:
+                        acc += 1
+                print(np.argmax(Y, axis=-1))
+                print(answers)
+                print("%f\t%f" % (base_scores, acc/len(Y)))
+                print("Testing:#########")
 
 
 
