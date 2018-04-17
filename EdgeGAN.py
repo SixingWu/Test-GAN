@@ -217,12 +217,28 @@ class EdgeGAN:
         train_op = optimizer.apply_gradients(grads, global_step=global_step)
         return train_op
 
-    def init_session(self):
-        config = tf.ConfigProto(allow_soft_placement=True,
-                                log_device_placement=False)
+    def init_session(self, mode='Train'):
+        print('initializing the model...')
+        print('train_mode: %s' % mode)
+        self.saver = tf.train.Saver()
+        config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
+        config.log_device_placement = False  #: 是否打印设备分配日志
+        config.allow_soft_placement = True  # ： 如果你指定的设备不存在，允许TF自动分配设备
         self.sess = tf.Session(config=config)
-        self.sess.run(tf.global_variables_initializer())
+
+        # check from checkpoint
+        ckpt_path = self.config.checkpoint_path
+        print('check the checkpoint_path : %s' % ckpt_path)
+        ckpt = tf.train.get_checkpoint_state(ckpt_path)
+        if ckpt and ckpt.model_checkpoint_path:
+            print('restoring from %s' % ckpt.model_checkpoint_path)
+            self.saver.restore(self.sess, ckpt.model_checkpoint_path)
+        elif mode != 'Train':
+            raise FileNotFoundError('Inference mode asks the checkpoint !')
+        else:
+            print('does not find the checkpoint, use fresh parameters')
+            self.sess.run(tf.global_variables_initializer())
 
     """
     Training
