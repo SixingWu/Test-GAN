@@ -8,6 +8,10 @@ class Config:
     negative_sampling_per_step = 10 * show_res_per_steps
     negative_sampling_ratio = 1
     epochs = 1
+
+    # loss
+    margin = 0.3
+    ratio = 0.5
     # checkpoint_path
 
     checkpoint_path = 'model/'

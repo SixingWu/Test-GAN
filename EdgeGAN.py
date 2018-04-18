@@ -126,6 +126,9 @@ class EdgeGAN:
         '''Uniform prior for G(Z)'''
         return np.random.uniform(-1., 1., size=[m, self.config.z_dim])
 
+    def clip_prob(self, x):
+        return tf.clip_by_value(x, 1e-10,1-1e-10)
+
 
     def build_graph(self):
         config = self.config
@@ -175,18 +178,14 @@ class EdgeGAN:
         _, t_prob, _ = self.create_classifer("Classifier", self.t)
         _, it_prob, _ = self.create_classifer("Classifier", self.it)
 
-        r = 0.5
-        m = 0.3
+        r = self.config.ratio
+        m = self.config.margin
         self.contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0.0,cosine(ih_prob,it_prob)-m))
-
-
-
-
         prob_Y = self.y_to_probs(self.Y)
 
         discrminator_objective_term = - tf.log(d_probs) - tf.log(1. - gd_probs)
-        learner_objective_term = - tf.log(l_probs) - tf.log(1. - gl_probs)
-        generator_objective_term = - tf.log(gd_probs) - tf.log(gl_probs)
+        learner_objective_term = - tf.log(self.clip_prob(l_probs)) - tf.log(self.clip_prob(1. - gl_probs))
+        generator_objective_term = - tf.log(self.clip_prob(gd_probs)) - tf.log(self.clip_prob(gl_probs))
         KL_term = tf.reduce_mean(tf.multiply(prob_Y, tf.log(tf.div(prob_Y, classifier_Y) + 1e-10)))
         MSE_term = tf.reduce_mean(tf.square(prob_Y - classifier_Y))
 
