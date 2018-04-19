@@ -59,7 +59,7 @@ for epoch in range(config.epochs):
     while True:
         i += 1
         try:
-            X, Y, h, t, ih, it = data.next_batch(config.batch_size, 'train')
+            X, Y, h, t, ih, it = data.random_next_batch(config.batch_size, 'train')
         except EOFError as e:
             print(e)
             print("Epoch %d is finished" % epoch)

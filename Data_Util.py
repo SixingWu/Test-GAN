@@ -77,6 +77,9 @@ class DataUtil:
         self.global_steps = 0
         self.epcoh_steps = 0
 
+    def set_pointer(self, global_steps, epoch_steps):
+        self.global_steps = global_steps
+        self.epcoh_steps = epoch_steps
 
     def generate_negative_set(self,num=10000):
         self.iedge_set = set()

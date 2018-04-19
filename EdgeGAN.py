@@ -183,10 +183,10 @@ class EdgeGAN:
         self.contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0.0,cosine(ih_prob,it_prob)-m))
         prob_Y = self.y_to_probs(self.Y)
 
-        discrminator_objective_term = - tf.log(d_probs) - tf.log(1. - gd_probs)
+        discrminator_objective_term = - tf.log(self.clip_prob(d_probs)) - tf.log(self.clip_prob(1. - gd_probs))
         learner_objective_term = - tf.log(self.clip_prob(l_probs)) - tf.log(self.clip_prob(1. - gl_probs))
         generator_objective_term = - tf.log(self.clip_prob(gd_probs)) - tf.log(self.clip_prob(gl_probs))
-        KL_term = tf.reduce_mean(tf.multiply(prob_Y, tf.log(tf.div(prob_Y, classifier_Y) + 1e-10)))
+        KL_term = tf.reduce_mean(tf.multiply(prob_Y, tf.log(tf.div(prob_Y, classifier_Y+ 1e-10) + 1e-10)))
         MSE_term = tf.reduce_mean(tf.square(prob_Y - classifier_Y))
 
 
@@ -215,11 +215,11 @@ class EdgeGAN:
         self.classifier_res = d_probs
 
     def optimize_with_clip(self, loss, var_list, global_step=None):
-        optimizer = tf.train.AdamOptimizer(0.0001)
+        optimizer = tf.train.AdamOptimizer(0.00005)
         grads = optimizer.compute_gradients(loss=loss, var_list=var_list)
         for i, (g, v) in enumerate(grads):
             if g is not None:
-                grads[i] = (tf.clip_by_norm(g, 5), v)  # clip gradients
+                grads[i] = (tf.clip_by_norm(g, 1), v)  # clip gradients
         train_op = optimizer.apply_gradients(grads, global_step=global_step)
         return train_op
 
@@ -237,6 +237,7 @@ class EdgeGAN:
         ckpt_path = self.config.checkpoint_path
         print('check the checkpoint_path : %s' % ckpt_path)
         ckpt = tf.train.get_checkpoint_state(ckpt_path)
+        # TODO 把步数加入到其中
         if ckpt and ckpt.model_checkpoint_path:
             print('restoring from %s' % ckpt.model_checkpoint_path)
             self.saver.restore(self.sess, ckpt.model_checkpoint_path)
