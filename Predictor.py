@@ -44,7 +44,7 @@ else:
     config.num_class = data.num_class
     config.batch_size = 16
     data.generate_negative_set(1000)
-config.batch_size = 4096
+config.batch_size = 256
 gan = EdgeGAN(config)
 gan.build_graph()
 gan.init_session()
