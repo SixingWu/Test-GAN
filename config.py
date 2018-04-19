@@ -27,5 +27,5 @@ class Config:
     x_dim=input_dim
 
     # generator
-    z_dim = 64
+    z_dim = 16
 
