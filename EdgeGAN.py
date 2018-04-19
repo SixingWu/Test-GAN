@@ -34,20 +34,20 @@ class EdgeGAN:
             input_dim = self.config.x_dim
             dtype = self.config.dtype
 
-            D_W_all = self._weight_var([num_class, input_dim * self.config.middle_size], 'Discriminator_all', dtype=dtype)
-            D_b_all = self._bias_var([num_class, self.config.middle_size], 'Discriminator_b1', dtype=dtype)
+            D_W_all = self._weight_var([num_class, input_dim * self.config.middle_size*2], 'Discriminator_all', dtype=dtype)
+            D_b_all = self._bias_var([num_class, self.config.middle_size*2], 'Discriminator_b1', dtype=dtype)
 
             # batch * input_dim * self.config.middle_size
-            D_W1 = tf.reshape(tf.matmul(y,D_W_all), [-1, input_dim, self.config.middle_size])
-            D_b1 = tf.reshape(tf.matmul(y,D_b_all), [-1, self.config.middle_size])
+            D_W1 = tf.reshape(tf.matmul(y,D_W_all), [-1, input_dim, self.config.middle_size*2])
+            D_b1 = tf.reshape(tf.matmul(y,D_b_all), [-1, self.config.middle_size*2])
 
             # Generate Parameter
 
-            D_W2 = self._weight_var([self.config.middle_size, 1], 'Discriminator_W2', dtype=dtype)
+            D_W2 = self._weight_var([self.config.middle_size*2, 1], 'Discriminator_W2', dtype=dtype)
             D_b2 = self._bias_var([1], 'Discriminator_b2', dtype=dtype)
             var_list = [D_W_all,D_b_all,D_W2,D_b2]
             x = tf.reshape(x, [-1, 1, input_dim])
-            D_h1 = tf.nn.relu(tf.reshape(tf.matmul(x, D_W1), [-1, self.config.middle_size]) + D_b1)
+            D_h1 = tf.nn.leaky_relu(tf.reshape(tf.matmul(x, D_W1), [-1, self.config.middle_size*2]) + D_b1)
             D_logit = tf.matmul(D_h1, D_W2) + D_b2
             D_prob = tf.nn.sigmoid(D_logit)
 
@@ -77,9 +77,9 @@ class EdgeGAN:
             G_W1 = tf.reshape(tf.matmul(y, G_W_all), [-1, z_dim, self.config.middle_size])
             G_b1 = tf.reshape(tf.matmul(y, G_b_all), [-1, self.config.middle_size])
             z = tf.reshape(z, [-1, 1, z_dim])
-            G_h1 = tf.nn.relu(tf.reshape(tf.matmul(z, G_W1), [-1, self.config.middle_size]) + G_b1)
+            G_h1 = tf.nn.leaky_relu(tf.reshape(tf.matmul(z, G_W1), [-1, self.config.middle_size]) + G_b1)
             G_log_prob = tf.matmul(G_h1, G_W2) + G_b2
-            G_prob = tf.nn.relu(G_log_prob)
+            G_prob = tf.nn.sigmoid(G_log_prob)
 
         return G_prob, var_list
 
@@ -98,7 +98,7 @@ class EdgeGAN:
             yz_concatenation = tf.concat([z, y_prob], axis=-1)
             W = self._weight_var([config.num_class+config.z_dim, config.x_dim], 'W', dtype=dtype)
             b = self._bias_var([config.x_dim], 'b', dtype=dtype)
-            GX = tf.nn.relu(tf.matmul(yz_concatenation,W) + b)
+            GX = tf.nn.leaky_relu(tf.matmul(yz_concatenation,W) + b)
             trainable_parameters = [W, b]
 
         return GX, trainable_parameters
