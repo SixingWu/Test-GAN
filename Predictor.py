@@ -58,7 +58,7 @@ with open('res.txt','w+') as fout:
     while True:
         i += 1
         try:
-            X = data.next_infer_batch(config.batch_size, 'test')
+            X = data.next_infer_batch(config.batch_size)
             probs, answers = do_infer(config, X)
             for answer in answers:
                 fout.write('%s\n' % answer)
