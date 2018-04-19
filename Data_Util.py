@@ -76,6 +76,7 @@ class DataUtil:
         # 全局的计步器和局部的计步器
         self.global_steps = 0
         self.epcoh_steps = 0
+        self.eval_steps = 0
 
     def set_pointer(self, global_steps, epoch_steps):
         self.global_steps = global_steps
@@ -159,6 +160,7 @@ class DataUtil:
         y = np.array(self.y[batch_ids])
         return x, y,h,t,ih,it
 
+
     def next_infer_batch(self,batch_size):
         if self.infer_step < len(self.x):
             batch_ids = np.array(self.train_ids[self.infer_step,self.infer_step+batch_size],dtype=np.int32)
@@ -166,7 +168,7 @@ class DataUtil:
             self.infer_step += batch_size
             return x
         else:
-            return None
+            raise EOFError()
 
 
 if __name__ =='__main__':

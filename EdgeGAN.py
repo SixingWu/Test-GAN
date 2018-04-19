@@ -77,7 +77,7 @@ class EdgeGAN:
             G_W1 = tf.reshape(tf.matmul(y, G_W_all), [-1, z_dim, self.config.middle_size])
             G_b1 = tf.reshape(tf.matmul(y, G_b_all), [-1, self.config.middle_size])
             z = tf.reshape(z, [-1, 1, z_dim])
-            G_h1 = tf.nn.leaky_relu(tf.reshape(tf.matmul(z, G_W1), [-1, self.config.middle_size]) + G_b1)
+            G_h1 = tf.nn.leaky_relu(tf.nn.dropout(tf.reshape(tf.matmul(z, G_W1), [-1, self.config.middle_size]) + G_b1, keep_prob=0.5))
             G_log_prob = tf.matmul(G_h1, G_W2) + G_b2
             G_prob = tf.nn.sigmoid(G_log_prob)
 
