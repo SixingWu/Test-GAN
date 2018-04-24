@@ -84,7 +84,7 @@ def main(argv):
                         probs = np.reshape(probs, [-1, num_class])
                         lables = np.argmax(probs, axis=-1)
                         return probs, lables
-                    
+
                     probs,answers = do_infer(config,X)
                     print("Testing:#########")
                     base_scores = 0
