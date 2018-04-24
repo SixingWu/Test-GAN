@@ -127,7 +127,7 @@ class EdgeGAN:
         return np.random.uniform(-1., 1., size=[m, self.config.z_dim])
 
     def clip_prob(self, x):
-        return tf.clip_by_value(x, 1e-10,1-1e-10)
+        return tf.clip_by_value(x, 1e-10, 1-1e-10)
 
 
     def build_graph(self):

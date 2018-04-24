@@ -15,7 +15,8 @@ class Config:
     # checkpoint_path
 
     checkpoint_path = 'model/'
-    epochs = 10
+    epochs = 1
+    max_step = 5000
     infor_step = 100
     middle_size = 10
     # input
