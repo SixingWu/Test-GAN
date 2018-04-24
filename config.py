@@ -16,7 +16,7 @@ class Config:
 
     checkpoint_path = 'model/'
     epochs = 1
-    ratio = 0.05
+    train_ratio = 0.05
     max_step = 5000
     infor_step = 100
     middle_size = 10
