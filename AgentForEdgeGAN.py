@@ -15,6 +15,7 @@ import os
 
 def main(argv):
 
+    # /ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex BlogTest
     debug = False
     path = argv[0] #'/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
     config = Config()
@@ -36,6 +37,8 @@ def main(argv):
         data.generate_negative_set(1000)
 
     config.checkpoint_path += argv[1]
+    config.max_step = int(data.edge_nums * config.ratio / config.batch_size) + 1
+    print("set max step to: %d" % config.max_step)
     gan = EdgeGAN(config)
     gan.build_graph()
     gan.init_session()

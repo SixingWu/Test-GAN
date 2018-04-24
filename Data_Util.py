@@ -16,6 +16,7 @@ class DataUtil:
         tmp = list()
         with open(reindex_path,'r+',encoding='utf-8') as fin:
             lines = fin.readlines()
+            self.edge_nums = len(lines)
             if max_line > 0:
                 lines = lines[0:max_line]
             log('total lines: %d' % len(lines))
