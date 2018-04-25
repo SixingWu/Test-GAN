@@ -103,7 +103,7 @@ class DataUtil:
             (x,y) = self.edge_list[i]
             self.h.append(self.adj_matrix[x])
             self.t.append(self.adj_matrix[y])
-            
+        print('bool -> float32')
         self.h = np.array(self.h, dtype=np.float32)
         self.ih = np.array(self.ih, dtype=np.float32)
         self.t = np.array(self.t, dtype=np.float32)
