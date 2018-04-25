@@ -42,11 +42,11 @@ class DataUtil:
         log('total labels of vertex: %d' % len(labels_set))
         log('transforming the dataset')
         n = len(vertex_set)
-        self.adj_matrix = np.eye(n)
+        self.adj_matrix = np.eye(n,dtype=np.bool)
         num_class = len(labels_set)
         for vertex1,labels1,vertex2,labels2 in tmp:
-            self.adj_matrix[vertex1][vertex2] = 1
-            self.adj_matrix[vertex2][vertex1] = 1
+            self.adj_matrix[vertex1][vertex2] = True
+            self.adj_matrix[vertex2][vertex1] = True
             vertex_list.append(vertex1)
             label_list.append(array_to_multi_hot(labels1, num_class))
             vertex_list.append(vertex2)
@@ -104,10 +104,10 @@ class DataUtil:
             self.h.append(self.adj_matrix[x])
             self.t.append(self.adj_matrix[y])
             
-        self.h = np.array(self.h)
-        self.ih = np.array(self.ih)
-        self.t = np.array(self.t)
-        self.it = np.array(self.it)
+        self.h = np.array(self.h, dtype=np.float32)
+        self.ih = np.array(self.ih, dtype=np.float32)
+        self.t = np.array(self.t, dtype=np.float32)
+        self.it = np.array(self.it, dtype=np.float32)
                 
         print('Done')
 
