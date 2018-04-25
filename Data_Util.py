@@ -104,10 +104,10 @@ class DataUtil:
             self.h.append(self.adj_matrix[x])
             self.t.append(self.adj_matrix[y])
         print('bool -> float32')
-        self.h = np.array(self.h, dtype=np.float32)
-        self.ih = np.array(self.ih, dtype=np.float32)
-        self.t = np.array(self.t, dtype=np.float32)
-        self.it = np.array(self.it, dtype=np.float32)
+        self.h = np.array(self.h)
+        self.ih = np.array(self.ih)
+        self.t = np.array(self.t)
+        self.it = np.array(self.it)
                 
         print('Done')
 
@@ -127,7 +127,7 @@ class DataUtil:
 
         elif mode == 'test':
             batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
-        x = np.array(self.adj_matrix[self.x[batch_ids],:],dtype=np.float32)
+        x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
         return x, y,h,t,ih,it
 

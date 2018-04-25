@@ -143,14 +143,24 @@ class EdgeGAN:
         Placeholders
         """
         self.global_step = tf.Variable(initial_value=0, dtype=tf.int64, trainable=False)
-        self.X = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='X')
+        self.Xb = tf.placeholder(tf.bool, shape=[None, config.x_dim], name='X')
         self.Y = tf.placeholder(config.dtype, shape=[None, config.num_class], name='Y')
         self.Z = tf.placeholder(config.dtype, shape=[None, config.z_dim], name='Y')
 
-        self.h = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='Head')
-        self.ih = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='IncorrectHead')
-        self.t = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='Tail')
-        self.it = tf.placeholder(config.dtype, shape=[None, config.x_dim], name='IncorrectTail')
+        self.hb = tf.placeholder(tf.bool, shape=[None, config.x_dim], name='Head')
+        self.ihb = tf.placeholder(tf.bool, shape=[None, config.x_dim], name='IncorrectHead')
+        self.tb = tf.placeholder(tf.bool, shape=[None, config.x_dim], name='Tail')
+        self.itb = tf.placeholder(tf.bool, shape=[None, config.x_dim], name='IncorrectTail')
+
+
+        """
+        Cast
+        """
+        self.X = tf.cast(self.Xb, config.dtype)
+        self.h = tf.cast(self.hb, config.dtype)
+        self.ih = tf.cast(self.ihb, config.dtype)
+        self.t = tf.cast(self.tb, config.dtype)
+        self.it = tf.cast(self.itb, config.dtype)
 
         """
         for Discrminator
@@ -261,17 +271,17 @@ class EdgeGAN:
         batch_size = self.config.batch_size
         Z = self._sample_Z(batch_size)
         _, discriminator_loss = self.sess.run([self.train_discriminator_op, self.discriminator_loss], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.Xb: X_data, self.Z: Z, self.Y: Y_data})
         _, learner_loss = self.sess.run([self.train_learner_op, self.learner_loss], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.Xb: X_data, self.Z: Z, self.Y: Y_data})
         _, generator_loss = self.sess.run([self.train_generator_op, self.generator_loss], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.Xb: X_data, self.Z: Z, self.Y: Y_data})
         _, classifier_loss = self.sess.run([self.train_classifier_op, self.classifier_loss], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.Xb: X_data, self.Z: Z, self.Y: Y_data})
         _, contrasive_loss = self.sess.run([self.train_contrasive_op, self.contrasive_loss], feed_dict={
-            self.h:h, self.ih:ih, self.t:t,self.it:it})
+            self.hb:h, self.ihb:ih, self.tb:t,self.itb:it})
         debug= self.sess.run([self.debug], feed_dict={
-            self.X: X_data, self.Z: Z, self.Y: Y_data})
+            self.Xb: X_data, self.Z: Z, self.Y: Y_data})
         step = self.sess.run(self.global_step)
 
         loss = [discriminator_loss,learner_loss,generator_loss,classifier_loss,contrasive_loss,debug]
@@ -287,7 +297,7 @@ class EdgeGAN:
         batch_size = self.config.batch_size
         Z = self._sample_Z(batch_size)
         probs = self.sess.run([self.classifier_res], feed_dict={
-            self.X: X_data, self.Y: Y_data})
+            self.Xb: X_data, self.Y: Y_data})
         return probs
 
 
