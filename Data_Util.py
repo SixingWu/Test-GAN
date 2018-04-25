@@ -127,7 +127,7 @@ class DataUtil:
 
         elif mode == 'test':
             batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
-        x = np.array(self.adj_matrix[self.x[batch_ids],:])
+        x = np.array(self.adj_matrix[self.x[batch_ids],:],dtype=np.float32)
         y = np.array(self.y[batch_ids])
         return x, y,h,t,ih,it
 
