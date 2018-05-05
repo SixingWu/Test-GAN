@@ -6,9 +6,6 @@ import time
 import numpy as np
 import sys
 
-
-
-
 def main(arg):
     def do_infer(config,X_data):
         num_class = config.num_class
@@ -57,16 +54,23 @@ def main(arg):
     with open(arg[2],'w+') as fout:
         print("Predicting start" )
         i = -1
+        acc = 0
+        total = 0
         while True:
             i += 1
             try:
-                X = data.next_infer_batch(config.batch_size)
+                X,Y = data.next_infer_batch(config.batch_size)
                 probs, answers = do_infer(config, X)
                 for answer in answers:
                     fout.write('%s\n' % answer)
+
+                for index, answer in enumerate(answers):
+                    total += 1
+                    if answer in truth[index]:
+                        acc += 1
             except EOFError as e:
                 print(e)
-                print("Predicting %d is finished" )
+                print("Predicting %d is finished, total avg : %.4f" % (acc/total) )
                 break;
 
 
