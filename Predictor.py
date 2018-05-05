@@ -76,7 +76,7 @@ def main(arg):
                         acc += 1
             except EOFError as e:
                 print(e)
-                print("Predicting %d is finished, total avg : %.4f" % (acc/total) )
+                print("Predicting is finished, total avg : %.4f" % (acc/total) )
                 break;
 
 
