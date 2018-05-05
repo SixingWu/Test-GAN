@@ -63,7 +63,13 @@ def main(arg):
                 probs, answers = do_infer(config, X)
                 for answer in answers:
                     fout.write('%s\n' % answer)
-
+                truth = []
+                for y_line in Y:
+                    res = set()
+                    for index, y in enumerate(y_line):
+                        if y > 0:
+                            res.add(index)
+                    truth.append(res)
                 for index, answer in enumerate(answers):
                     total += 1
                     if answer in truth[index]:
