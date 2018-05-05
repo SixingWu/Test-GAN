@@ -1,7 +1,7 @@
 import tensorflow as tf
 class Config:
     # training process
-    batch_size = 48
+    batch_size = 64
     show_res_per_steps = 100
     internal_test_per_steps = 5 * show_res_per_steps
     checkpoint_per_steps = 20 * show_res_per_steps
@@ -17,7 +17,7 @@ class Config:
     checkpoint_path = 'model/'
     epochs = 1
     train_ratio = 0.05
-    max_step = 5000
+    max_step = 3000
     infor_step = 100
     middle_size = 10
     # input
