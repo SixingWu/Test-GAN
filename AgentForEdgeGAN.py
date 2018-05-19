@@ -49,6 +49,7 @@ def main(argv):
 
     current_time = time.time()
 
+
     for epoch in range(config.epochs):
         print("Epoch %d start" % epoch)
         i = -1
