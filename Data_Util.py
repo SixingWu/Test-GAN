@@ -178,7 +178,7 @@ class DataUtil:
     def next_infer_batch(self,batch_size):
         if self.infer_step < len(self.adj_matrix):
             batch_ids = np.array(range(self.infer_step, min(len(self.adj_matrix),self.infer_step+batch_size)),dtype=np.int32)
-            x = np.array(self.adj_matrix[self.x[batch_ids], :])
+            x = np.array(self.adj_matrix[batch_ids])
             y = np.array(self.ordered_y[batch_ids])
             self.infer_step += batch_size
             return x,y
