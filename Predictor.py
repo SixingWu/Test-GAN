@@ -52,7 +52,7 @@ def main(arg):
     current_time = time.time()
 
     with open(arg[2],'w+') as fout:
-        print("Predicting start" )
+        print("Predicting start   num_class:%d" % (config.num_class) )
         i = -1
         acc = 0
         total = 0
