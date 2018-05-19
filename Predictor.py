@@ -7,22 +7,7 @@ import numpy as np
 import sys
 
 def main(arg):
-    def do_infer(config,X_data):
-        num_class = config.num_class
-        MX = []
-        MY = []
-        for x in X_data:
-            for i in range(num_class):
-                MX.append(x)
-                y = np.zeros([num_class])
-                y[i] = 1.0
-                MY.append(y)
 
-        probs = gan.infer_step(MX,MY)
-        probs = np.reshape(probs,[-1, num_class])
-        print(probs)
-        lables = np.argmax(probs, axis=-1)
-        return probs, lables
 
     debug = False
     path = arg[0] # '/ldev/wsx/tmp/netemb/github/dataset/generated_data/eco_blogCatalog3.txt.labeled.reindex'
@@ -61,6 +46,23 @@ def main(arg):
             i += 1
             try:
                 X,Y = data.next_infer_batch(config.batch_size)
+
+                def do_infer(config, X_data):
+                    num_class = config.num_class
+                    MX = []
+                    MY = []
+                    for x in X_data:
+                        for i in range(num_class):
+                            MX.append(x)
+                            y = np.zeros([num_class])
+                            y[i] = 1.0
+                            MY.append(y)
+
+                    probs = gan.infer_step(MX, MY)
+                    probs = np.reshape(probs, [-1, num_class])
+                    lables = np.argmax(probs, axis=-1)
+                    return probs, lables
+
                 probs, answers = do_infer(config, X)
                 for answer in answers:
                     fout.write('%s\n' % answer)
