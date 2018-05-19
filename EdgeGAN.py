@@ -5,9 +5,10 @@ from config import Config
 
 
 class EdgeGAN:
-    def __init__(self, config, dropout=0.5):
+    def __init__(self, config, dropout=0.5, lr=0.00005):
         self.config = config
         self.dropout = dropout
+        self.lr = lr
     def _weight_var(self, shape, name, dtype=tf.float32):
         return tf.get_variable(name=name, shape=shape, initializer=tf.contrib.layers.xavier_initializer(dtype=dtype),dtype=dtype)
 
@@ -226,7 +227,7 @@ class EdgeGAN:
         self.classifier_res = d_probs
 
     def optimize_with_clip(self, loss, var_list, global_step=None):
-        optimizer = tf.train.AdamOptimizer(0.00005)
+        optimizer = tf.train.AdamOptimizer(self.lr)
         grads = optimizer.compute_gradients(loss=loss, var_list=var_list)
         for i, (g, v) in enumerate(grads):
             if g is not None:

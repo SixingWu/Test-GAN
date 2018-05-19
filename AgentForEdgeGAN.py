@@ -41,7 +41,8 @@ def main(argv):
     config.max_step = max(config.max_step, 5005)
     config.max_step = min(config.max_step, 15005)
     print("set max step to: %d" % config.max_step)
-    gan = EdgeGAN(config)
+    lr = float(argv[2])
+    gan = EdgeGAN(config,lr=lr)
     gan.build_graph()
     gan.init_session()
 
