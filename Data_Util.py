@@ -5,7 +5,7 @@ import numpy as np
 from multiprocessing import Pool  
 
 class DataUtil:
-    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0.3, sample_mode=True):
+    def __init__(self, reindex_path=r'C:\Users\v-sixwu\Downloads\eca_blogCatalog3.txt.labeled.reindex',max_line = -1,test_rate=0, sample_mode=True):
         log('loading Edge-Centic dataset form : %s' % (reindex_path))
         vertex_set = set()
         labels_set = set()
@@ -14,43 +14,55 @@ class DataUtil:
         vertex_label = dict()
         edge_set = set()
         tmp = list()
+        
+        with open(reindex_path+"_group",'r+',encoding='utf-8') as fin:
+            lines = fin.readlines()
+            num_class = int(lines[0].strip('\n').split()[1]) - 1
+            for line in lines[1:]:
+                items = line.strip('\n').split(':')
+                vertex = int(items[0].strip())
+                labels = [int(x)-1 for x in items[1].strip().split(' ')]
+                vertex_label[vertex] = labels
+                for label in labels:
+                    labels_set.add(label)
+            
         with open(reindex_path,'r+',encoding='utf-8') as fin:
             lines = fin.readlines()
-            self.edge_nums = len(lines)
-            if max_line > 0:
-                lines = lines[0:max_line]
-            log('total lines: %d' % len(lines))
-            for line in lines:
-                items = line.strip('\n').split('\t')
+            items = lines[1].strip('\n').split()
+            self.edge_nums = int(items[1])
+            self.vertex_nums = int(items[0])
+            for line in lines[1:]:
+                items = line.strip('\n').split(' ')
                 vertex1 = int(items[0])
                 vertex2 = int(items[1])
                 edge_set.add((vertex1,vertex2))
                 edge_set.add((vertex2,vertex1))
-                weight = float(items[2])
-                labels1 = [int(x)-1 for x in items[3].split(' ')]
-                labels2 = [int(x)-1 for x in items[4].split(' ')]
-                overlap_ratio = float(items[5])
                 vertex_set.add(vertex1)
                 vertex_set.add(vertex2)
-                labels_set = labels_set | set(labels1)
-                labels_set = labels_set | set(labels2)
-                tmp.append((vertex1,labels1,vertex2,labels2))
-                vertex_label[vertex1] = labels1
-                vertex_label[vertex2] = labels2
+                tmp.append((vertex1,vertex2))
+
         log('the dataset has been loaded!')
         log('total account of vertex: %d' % len(vertex_set))
         log('total labels of vertex: %d' % len(labels_set))
         log('transforming the dataset')
         n = len(vertex_set)
         self.adj_matrix = np.eye(n,dtype=np.bool)
-        num_class = len(labels_set)
-        for vertex1,labels1,vertex2,labels2 in tmp:
+        for vertex1,vertex2 in tmp:
             self.adj_matrix[vertex1][vertex2] = True
             self.adj_matrix[vertex2][vertex1] = True
             vertex_list.append(vertex1)
+            labels1 = vertex_label[vertex1]
+            labels2 = vertex_label[vertex2]
             label_list.append(array_to_multi_hot(labels1, num_class))
             vertex_list.append(vertex2)
             label_list.append(array_to_multi_hot(labels2, num_class))
+
+        self.ordered_y = []
+        for ox in range(0,len(vertex_set)):
+            label = vertex_label[ox]
+            self.ordered_y.append(array_to_multi_hot(label, num_class))
+        self.ordered_y = np.array(self.ordered_y)
+
 
         self.num_class = num_class
         self.num_vertex = len(vertex_set)
@@ -156,7 +168,8 @@ class DataUtil:
 
 
         elif mode == 'test':
-            batch_ids = np.array(random.sample(self.test_ids, batch_size), dtype=np.int32)
+            # test ids are removed!
+            batch_ids = np.array(random.sample(self.train_ids, batch_size), dtype=np.int32)
         x = np.array(self.adj_matrix[self.x[batch_ids],:])
         y = np.array(self.y[batch_ids])
         return x, y,h,t,ih,it
@@ -166,7 +179,7 @@ class DataUtil:
         if self.infer_step < len(self.adj_matrix):
             batch_ids = np.array(range(self.infer_step, min(len(self.adj_matrix),self.infer_step+batch_size)),dtype=np.int32)
             x = np.array(self.adj_matrix[self.x[batch_ids], :])
-            y = np.array(self.y[batch_ids])
+            y = np.array(self.ordered_y[batch_ids])
             self.infer_step += batch_size
             return x,y
         else:
@@ -180,3 +193,4 @@ if __name__ =='__main__':
         x, y,h,t,ih,it = test.next_batch(128)
         print(x)
         print(np.shape(x))
+
