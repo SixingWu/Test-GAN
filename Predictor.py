@@ -20,6 +20,7 @@ def main(arg):
 
         probs = gan.infer_step(MX,MY)
         probs = np.reshape(probs,[-1, num_class])
+        print(probs)
         lables = np.argmax(probs, axis=-1)
         return probs, lables
 
