@@ -30,7 +30,7 @@ def main(arg):
         data.generate_negative_set(1000)
     config.batch_size = 256
     config.checkpoint_path += arg[1]+'/'
-    gan = EdgeGAN(config)
+    gan = EdgeGAN(config,1.0)
     gan.build_graph()
     gan.init_session()
 

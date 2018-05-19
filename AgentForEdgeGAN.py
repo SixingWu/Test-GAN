@@ -38,7 +38,7 @@ def main(argv):
 
     config.checkpoint_path += argv[1]+'/'
     config.max_step = int(data.edge_nums * config.train_ratio / config.batch_size) + 1
-    config.max_step = max(config.max_step, 10005)
+    config.max_step = max(config.max_step, 5005)
     config.max_step = min(config.max_step, 15005)
     print("set max step to: %d" % config.max_step)
     gan = EdgeGAN(config)
