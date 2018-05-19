@@ -226,7 +226,7 @@ class EdgeGAN:
         self.classifier_res = d_probs
 
     def optimize_with_clip(self, loss, var_list, global_step=None):
-        optimizer = tf.train.AdamOptimizer(0.0005)
+        optimizer = tf.train.AdamOptimizer(0.00005)
         grads = optimizer.compute_gradients(loss=loss, var_list=var_list)
         for i, (g, v) in enumerate(grads):
             if g is not None:

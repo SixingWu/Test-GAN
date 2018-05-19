@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="862bfa5d-ddb6-4d24-8852-dec9c3558d97" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_Util.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_Util.py" afterDir="false" />
-    </list>
+    <list default="true" id="862bfa5d-ddb6-4d24-8852-dec9c3558d97" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,7 +15,7 @@
       <file leaf-file-name="AgentForEdgeGAN.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/AgentForEdgeGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="874">
+            <state relative-caret-position="661">
               <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
@@ -27,11 +24,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EdgeGAN.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="EdgeGAN.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/EdgeGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="196" column="82" lean-forward="true" selection-start-line="196" selection-start-column="82" selection-end-line="196" selection-end-column="82" />
+            <state relative-caret-position="247">
+              <caret line="228" column="49" selection-start-line="228" selection-start-column="49" selection-end-line="228" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -45,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Data_Util.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Data_Util.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Data_Util.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2137">
-              <caret line="180" column="52" lean-forward="true" selection-start-line="180" selection-start-column="52" selection-end-line="180" selection-end-column="52" />
+            <state relative-caret-position="351">
+              <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
             </state>
           </provider>
         </entry>
@@ -92,8 +89,8 @@
         <option value="$PROJECT_DIR$/config.py" />
         <option value="$PROJECT_DIR$/Predictor.py" />
         <option value="$PROJECT_DIR$/AgentForEdgeGAN.py" />
-        <option value="$PROJECT_DIR$/EdgeGAN.py" />
         <option value="$PROJECT_DIR$/Data_Util.py" />
+        <option value="$PROJECT_DIR$/EdgeGAN.py" />
       </list>
     </option>
   </component>
@@ -507,7 +504,14 @@
       <option name="project" value="LOCAL" />
       <updated>1526711298864</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Faster">
+      <created>1526711683863</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1526711683863</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -865,9 +869,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Data_Util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="86" column="66" selection-start-line="86" selection-start-column="66" selection-end-line="86" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/AgentForEdgeGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
+        <state relative-caret-position="661">
           <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
@@ -877,15 +888,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/EdgeGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="196" column="82" lean-forward="true" selection-start-line="196" selection-start-column="82" selection-end-line="196" selection-end-column="82" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_Util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2137">
-          <caret line="180" column="52" lean-forward="true" selection-start-line="180" selection-start-column="52" selection-end-line="180" selection-end-column="52" />
+        <state relative-caret-position="247">
+          <caret line="228" column="49" selection-start-line="228" selection-start-column="49" selection-end-line="228" selection-end-column="49" />
         </state>
       </provider>
     </entry>
