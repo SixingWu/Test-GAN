@@ -74,7 +74,7 @@ def main(argv):
                     data.generate_negative_set(negative_tuple_nums)
             if i % config.internal_test_per_steps == 0:
                     X, Y, h, t, ih, it = data.next_batch(config.batch_size*2, 'test')
-
+                    X, Y = data.next_infer_batch(config.batch_size)
                     def do_infer(config, X_data):
                         num_class = config.num_class
                         MX = []
