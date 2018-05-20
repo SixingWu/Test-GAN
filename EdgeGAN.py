@@ -119,7 +119,7 @@ class EdgeGAN:
             W = self._weight_var([config.x_dim, config.num_class], 'W', dtype=dtype)
             b = self._bias_var([config.num_class], 'b', dtype=dtype)
             # TODO +ReLU
-            logits = tf.matmul(x,W) + b
+            logits = tf.nn.leaky_relu(tf.matmul(x,W) + b)
             probs = tf.nn.softmax(logits, dim=-1)
             trainable_parameters = [W, b]
         return logits, probs, trainable_parameters
