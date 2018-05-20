@@ -54,8 +54,8 @@
       <file leaf-file-name="Predictor.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Predictor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="66" column="41" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
+            <state relative-caret-position="418">
+              <caret line="99" column="38" selection-start-line="99" selection-start-column="38" selection-end-line="99" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -525,7 +525,28 @@
       <option name="project" value="LOCAL" />
       <updated>1526714311282</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="softmax">
+      <created>1526805430476</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1526805430476</updated>
+    </task>
+    <task id="LOCAL-00043" summary="softmax">
+      <created>1526805533511</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1526805533511</updated>
+    </task>
+    <task id="LOCAL-00044" summary="softmax">
+      <created>1526805629819</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1526805629819</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -558,7 +579,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="V2" />
     <MESSAGE value="Faster" />
-    <option name="LAST_COMMIT_MESSAGE" value="Faster" />
+    <MESSAGE value="softmax" />
+    <option name="LAST_COMMIT_MESSAGE" value="softmax" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -881,8 +903,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Predictor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="361">
-          <caret line="66" column="41" selection-start-line="66" selection-start-column="41" selection-end-line="66" selection-end-column="41" />
+        <state relative-caret-position="418">
+          <caret line="99" column="38" selection-start-line="99" selection-start-column="38" selection-end-line="99" selection-end-column="38" />
         </state>
       </provider>
     </entry>

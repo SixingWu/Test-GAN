@@ -67,27 +67,37 @@ def main(arg):
                     for i in range(len(probs)):
                         probs[i] = softmax(probs[i])
 
-                    print(probs)
                     lables = np.argmax(probs, axis=-1)
+
+                    for prob,lable in zip(probs,lables):
+                        print(prob)
+                        print(label)
+                        print('------------------')
                     return probs, lables
 
                 probs, answers = do_infer(config, X)
                 for answer in answers:
                     fout.write('%s\n' % answer)
                 truth = []
+                real_distribution = [0,0,0]
+                res_distribution = [0,0,0]
                 for y_line in Y:
                     res = set()
                     for index, y in enumerate(y_line):
                         if y > 0:
+                            real_distribution[index] += 1
                             res.add(index)
                     truth.append(res)
                 for index, answer in enumerate(answers):
                     total += 1
+                    res_distribution[answer] += 1
                     if answer in truth[index]:
                         acc += 1
             except EOFError as e:
                 print(e)
                 print("Predicting is finished, total avg : %.4f" % (acc/total) )
+                print(real_distribution)
+                print(res_distribution)
                 break;
 
 
