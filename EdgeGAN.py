@@ -119,7 +119,7 @@ class EdgeGAN:
             W = self._weight_var([config.x_dim, config.num_class], 'W', dtype=dtype)
             b = self._bias_var([config.num_class], 'b', dtype=dtype)
             # TODO +ReLU
-            logits = tf.nn.leaky_relu(tf.matmul(x,W) + b)
+            logits = tf.matmul(x,W) + b
             probs = tf.nn.softmax(logits, dim=-1)
             trainable_parameters = [W, b]
         return logits, probs, trainable_parameters
@@ -214,7 +214,7 @@ class EdgeGAN:
         self.generator_loss = tf.reduce_mean(generator_objective_term)
         self.train_generator_op = self.optimize_with_clip(self.generator_loss, var_list=g_paras+d_paras+l_paras)
         self.classifier_loss = tf.reduce_mean(KL_term)
-        self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras+d_paras+g_paras, global_step=self.global_step)
+        self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras, global_step=self.global_step)
         self.train_contrasive_op = self.optimize_with_clip(self.contrasive_loss, var_list=c_paras)
         # TODO Cosine 距离
 

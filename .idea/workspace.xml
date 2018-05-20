@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="862bfa5d-ddb6-4d24-8852-dec9c3558d97" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EdgeGAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/EdgeGAN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/venv/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,17 +28,17 @@
       <file leaf-file-name="EdgeGAN.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/EdgeGAN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="813">
-              <caret line="203" lean-forward="true" selection-start-line="203" selection-end-line="203" />
+            <state relative-caret-position="463">
+              <caret line="306" lean-forward="true" selection-start-line="306" selection-end-line="306" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="config.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="12" column="16" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
+            <state relative-caret-position="627">
+              <caret line="33" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
         </entry>
@@ -50,11 +52,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Predictor.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Predictor.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Predictor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="60" column="21" selection-start-line="60" selection-start-column="21" selection-end-line="60" selection-end-column="21" />
+            <state relative-caret-position="1083">
+              <caret line="63" column="36" lean-forward="true" selection-start-line="63" selection-start-column="36" selection-end-line="63" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -75,6 +77,7 @@
       <find>relu</find>
       <find>self.x</find>
       <find>keep_prob</find>
+      <find>offset</find>
       <find>margin</find>
     </findStrings>
   </component>
@@ -88,9 +91,9 @@
         <option value="$PROJECT_DIR$/Multiclassifier_exp_back.py" />
         <option value="$PROJECT_DIR$/AgentForEdgeGAN.py" />
         <option value="$PROJECT_DIR$/Data_Util.py" />
-        <option value="$PROJECT_DIR$/config.py" />
-        <option value="$PROJECT_DIR$/EdgeGAN.py" />
         <option value="$PROJECT_DIR$/Predictor.py" />
+        <option value="$PROJECT_DIR$/EdgeGAN.py" />
+        <option value="$PROJECT_DIR$/config.py" />
       </list>
     </option>
   </component>
@@ -237,20 +240,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1521553091044</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Faster">
-      <created>1524033037508</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1524033037508</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Faster">
-      <created>1524128729167</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1524128729167</updated>
     </task>
     <task id="LOCAL-00013" summary="Faster">
       <created>1524129364316</created>
@@ -581,17 +570,31 @@
       <option name="project" value="LOCAL" />
       <updated>1526810333725</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="softmax">
+      <created>1526810473598</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1526810473598</updated>
+    </task>
+    <task id="LOCAL-00061" summary="softmax">
+      <created>1526810554293</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1526810554293</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1381" height="885" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19824433" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.19824433" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.21243523" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.21243523" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32921347" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.41797754" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -607,6 +610,26 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.41797754" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19824433" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="7" weight="0.32921347" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3988764" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.19016817" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="10" visible="true" weight="0.21243523" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -915,13 +938,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="12" column="16" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/AgentForEdgeGAN.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
@@ -929,17 +945,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/EdgeGAN.py">
+    <entry file="file://$PROJECT_DIR$/Predictor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="813">
-          <caret line="203" lean-forward="true" selection-start-line="203" selection-end-line="203" />
+        <state relative-caret-position="1083">
+          <caret line="63" column="36" lean-forward="true" selection-start-line="63" selection-start-column="36" selection-end-line="63" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Predictor.py">
+    <entry file="file://$PROJECT_DIR$/EdgeGAN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="60" column="21" selection-start-line="60" selection-start-column="21" selection-end-line="60" selection-end-column="21" />
+        <state relative-caret-position="463">
+          <caret line="306" lean-forward="true" selection-start-line="306" selection-end-line="306" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="627">
+          <caret line="33" selection-start-line="33" selection-end-line="33" />
         </state>
       </provider>
     </entry>
