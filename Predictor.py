@@ -43,14 +43,19 @@ def main(arg):
         acc = 0
         total = 0
         real_distribution = [0, 0, 0]
-        res_distribution = [0, 0, 0]
+        res_distribution = [1, 1, 1]
         while True:
             i += 1
             try:
                 X,Y = data.next_infer_batch(config.batch_size)
 
-                def do_infer(config, X_data):
+                def softmax(x):
+                    return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+
+                def do_infer(config, X_data, offset):
                     num_class = config.num_class
+                    offset = softmax(max(offset) - offset)  / 100000.0
                     MX = []
                     MY = []
                     for x in X_data:
@@ -63,11 +68,10 @@ def main(arg):
                     probs = gan.infer_step(MX, MY)
                     probs = np.reshape(probs, [-1, num_class])
 
-                    def softmax(x):
-                        return np.exp(x) / np.sum(np.exp(x), axis=0)
+
 
                     for i in range(len(probs)):
-                        probs[i] = softmax(probs[i])
+                        probs[i] = softmax(probs[i]) + offset
 
                     labels = np.argmax(probs, axis=-1)
 
