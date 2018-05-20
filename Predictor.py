@@ -62,7 +62,7 @@ def main(arg):
                     probs = np.reshape(probs, [-1, num_class])
 
                     def softmax(x):
-                        return np.exp(x) / np.sum(np.exp(x), axis=1)
+                        return np.exp(x) / np.reshape(np.sum(np.exp(x), axis=1),[-1])
 
                     probs = softmax(probs)
                     print(probs)
