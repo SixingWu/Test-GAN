@@ -214,7 +214,7 @@ class EdgeGAN:
         self.generator_loss = tf.reduce_mean(generator_objective_term)
         self.train_generator_op = self.optimize_with_clip(self.generator_loss, var_list=g_paras+d_paras+l_paras)
         self.classifier_loss = tf.reduce_mean(KL_term)
-        self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras, global_step=self.global_step)
+        self.train_classifier_op = self.optimize_with_clip(self.classifier_loss, var_list=c_paras+d_paras+g_paras, global_step=self.global_step)
         self.train_contrasive_op = self.optimize_with_clip(self.contrasive_loss, var_list=c_paras)
         # TODO Cosine 距离
 
