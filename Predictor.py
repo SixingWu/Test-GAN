@@ -55,7 +55,7 @@ def main(arg):
 
                 def do_infer(config, X_data, offset):
                     num_class = config.num_class
-                    offset = softmax(max(offset) - offset)  / 100000.0
+                    offset = softmax(-np.array(offset) + max(offset))  / 100000.0
                     MX = []
                     MY = []
                     for x in X_data:
