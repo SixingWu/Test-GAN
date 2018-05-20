@@ -30,6 +30,8 @@ def main(arg):
         data.generate_negative_set(1000)
     config.batch_size = 256
     config.checkpoint_path += arg[1]+'/'
+    balance_rate = float(arg[2])
+    print('balance_rate:%f' % balance_rate)
     gan = EdgeGAN(config,1.0)
     gan.build_graph()
     gan.init_session()
@@ -55,7 +57,7 @@ def main(arg):
 
                 def do_infer(config, X_data, offset):
                     num_class = config.num_class
-                    offset = softmax(-np.array(offset) + max(offset))  / 100000.0
+                    offset = softmax(-np.array(offset) + max(offset))  * balance_rate
                     MX = []
                     MY = []
                     for x in X_data:
