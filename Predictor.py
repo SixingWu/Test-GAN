@@ -60,6 +60,11 @@ def main(arg):
 
                     probs = gan.infer_step(MX, MY)
                     probs = np.reshape(probs, [-1, num_class])
+
+                    def softmax(x):
+                        return np.exp(x) / np.sum(np.exp(x), axis=1)
+
+                    probs = softmax(probs)
                     print(probs)
                     lables = np.argmax(probs, axis=-1)
                     return probs, lables
