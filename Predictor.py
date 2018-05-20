@@ -78,7 +78,7 @@ def main(arg):
 
                     return probs, labels
 
-                probs, answers = do_infer(config, X)
+                probs, answers = do_infer(config, X, res_distribution)
 
                 for prob, label in zip(probs, Y):
                     print(prob)
