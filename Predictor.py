@@ -82,10 +82,10 @@ def main(arg):
 
                 probs, answers = do_infer(config, X, res_distribution)
 
-                for prob, label in zip(probs, Y):
-                    print(prob)
-                    print(label)
-                    print('------------------')
+                # for prob, label in zip(probs, Y):
+                #     print(prob)
+                #     print(label)
+                #     print('------------------')
 
                 for answer in answers:
                     fout.write('%s\n' % answer)
