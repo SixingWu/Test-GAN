@@ -42,6 +42,8 @@ def main(arg):
         i = -1
         acc = 0
         total = 0
+        real_distribution = [0, 0, 0]
+        res_distribution = [0, 0, 0]
         while True:
             i += 1
             try:
@@ -69,18 +71,20 @@ def main(arg):
 
                     labels = np.argmax(probs, axis=-1)
 
-                    for prob,label in zip(probs,labels):
-                        print(prob)
-                        print(label)
-                        print('------------------')
+
                     return probs, labels
 
                 probs, answers = do_infer(config, X)
+
+                for prob, label in zip(probs, answers):
+                    print(prob)
+                    print(label)
+                    print('------------------')
+
                 for answer in answers:
                     fout.write('%s\n' % answer)
                 truth = []
-                real_distribution = [0,0,0]
-                res_distribution = [0,0,0]
+
                 for y_line in Y:
                     res = set()
                     for index, y in enumerate(y_line):
