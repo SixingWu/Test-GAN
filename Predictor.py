@@ -67,13 +67,13 @@ def main(arg):
                     for i in range(len(probs)):
                         probs[i] = softmax(probs[i])
 
-                    lables = np.argmax(probs, axis=-1)
+                    labels = np.argmax(probs, axis=-1)
 
-                    for prob,lable in zip(probs,lables):
+                    for prob,label in zip(probs,labels):
                         print(prob)
                         print(label)
                         print('------------------')
-                    return probs, lables
+                    return probs, labels
 
                 probs, answers = do_infer(config, X)
                 for answer in answers:
