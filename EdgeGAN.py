@@ -193,7 +193,7 @@ class EdgeGAN:
         r = self.config.ratio
         m = self.config.margin
         self.contrasive_loss = r * tf.reduce_mean(1.0 - cosine(h_prob,t_prob)) + (1-r)*tf.reduce_mean(tf.maximum(0.0,cosine(ih_prob,it_prob)-m))
-        prob_Y = self.Y #self.y_to_probs(self.Y)
+        prob_Y = self.y_to_probs(self.Y)
 
         discrminator_objective_term = - tf.log(self.clip_prob(d_probs)) - tf.log(self.clip_prob(1. - gd_probs))
         learner_objective_term = - tf.log(self.clip_prob(l_probs)) - tf.log(self.clip_prob(1. - gl_probs))

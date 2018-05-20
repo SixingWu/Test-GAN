@@ -10,7 +10,7 @@ class Config:
     epochs = 1
 
     # loss
-    margin = 0.3
+    margin = 0.5
     ratio = 0.5
     # checkpoint_path
 
