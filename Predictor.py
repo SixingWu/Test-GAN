@@ -57,7 +57,7 @@ def main(arg):
 
                 def do_infer(config, X_data, offset):
                     num_class = config.num_class
-                    offset = softmax(-np.array(offset) + max(offset))  * balance_rate
+                    offset = softmax(-np.array(offset) + max(offset) +1e-9)  * balance_rate
                     #print(offset)
                     MX = []
                     MY = []
