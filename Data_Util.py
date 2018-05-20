@@ -95,7 +95,7 @@ class DataUtil:
         self.global_steps = global_steps
         self.epcoh_steps = epoch_steps
 
-    def generate_negative_set(self,num=10000):
+    def generate_negative_set(self,num=20000):
         self.iedge_set = set()
         self.h = []
         self.t = []
